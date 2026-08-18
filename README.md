@@ -8,10 +8,13 @@ TimescaleDB, and .NET MAUI.
 > the simulator produces the RSSI a real gateway would measure, so the whole
 > processing pipeline runs on realistic inputs. See [Limitations](#limitations).
 
-![Demo](docs/images/demo.gif)
+![Demo](docs/images/demo.svg)
 
-<sub>*Placeholder — record a short GIF of the MAUI app receiving live positions
-and drop it as `docs/images/demo.gif`.*</sub>
+<sub>*Synthetic illustration — the tags animate along fabricated trajectories
+so the README shows something in motion before a real screen capture is
+recorded. Two tags briefly enter the "Local electrique" zone and turn red
+to illustrate the forbidden-zone alert. Replace with an actual MAUI capture
+(`docs/images/demo.gif`) when available.*</sub>
 
 <details>
 <summary><b>Résumé en français</b></summary>

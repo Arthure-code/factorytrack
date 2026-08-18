@@ -1,0 +1,270 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 540" font-family="Segoe UI, Arial, sans-serif">
+  <!--
+    Illustration synthetique du client MAUI FactoryTrack.
+    Ce n'est PAS une capture de l'application reelle : les positions et
+    trajectoires sont simulees pour illustrer le principe.
+    Coordonnees : plan 60 m x 40 m mis a l'echelle 12 px/m, origine (0,0)
+    en bas a gauche (l'axe Y est inverse en SVG).
+  -->
+
+  <!-- Fond de page -->
+  <rect width="800" height="540" fill="#FFFFFF"/>
+
+  <!-- Bandeau d'entete -->
+  <g>
+    <text x="40" y="35" font-size="20" font-weight="700" fill="#1E3A5F">Plan de l'usine</text>
+    <circle cx="40" cy="60" r="5" fill="#27AE60"/>
+    <text x="52" y="65" font-size="13" fill="#303A4A">En direct</text>
+    <text x="112" y="65" font-size="13" fill="#6B7684">· 10 equipements</text>
+  </g>
+
+  <!-- Cadre du plan (720x480 = 60m x 40m a 12 px/m) -->
+  <rect x="40" y="30" width="720" height="480" fill="#F6F7F9" stroke="#303A4A" stroke-width="2"/>
+
+  <!-- Grille tous les 5 m (60 px) -->
+  <g stroke="#E0E4EA" stroke-width="1">
+    <line x1="100" y1="30" x2="100" y2="510"/>
+    <line x1="160" y1="30" x2="160" y2="510"/>
+    <line x1="220" y1="30" x2="220" y2="510"/>
+    <line x1="280" y1="30" x2="280" y2="510"/>
+    <line x1="340" y1="30" x2="340" y2="510"/>
+    <line x1="400" y1="30" x2="400" y2="510"/>
+    <line x1="460" y1="30" x2="460" y2="510"/>
+    <line x1="520" y1="30" x2="520" y2="510"/>
+    <line x1="580" y1="30" x2="580" y2="510"/>
+    <line x1="640" y1="30" x2="640" y2="510"/>
+    <line x1="700" y1="30" x2="700" y2="510"/>
+
+    <line x1="40" y1="90"  x2="760" y2="90"/>
+    <line x1="40" y1="150" x2="760" y2="150"/>
+    <line x1="40" y1="210" x2="760" y2="210"/>
+    <line x1="40" y1="270" x2="760" y2="270"/>
+    <line x1="40" y1="330" x2="760" y2="330"/>
+    <line x1="40" y1="390" x2="760" y2="390"/>
+    <line x1="40" y1="450" x2="760" y2="450"/>
+  </g>
+
+  <!-- Zones -->
+  <!-- Quai de chargement : (0,0)-(15,12) m -->
+  <g>
+    <rect x="40" y="366" width="180" height="144" fill="#2ECC71" fill-opacity="0.15" stroke="#27AE60" stroke-width="1.5"/>
+    <text x="46" y="380" font-size="12" fill="#27AE60">Quai de chargement</text>
+  </g>
+  <!-- Zone de production : (15,5)-(50,35) m -->
+  <g>
+    <rect x="220" y="90" width="420" height="360" fill="#2ECC71" fill-opacity="0.15" stroke="#27AE60" stroke-width="1.5"/>
+    <text x="226" y="104" font-size="12" fill="#27AE60">Zone de production</text>
+  </g>
+  <!-- Local electrique (interdite) : (52,32)-(60,40) m -->
+  <g>
+    <rect x="664" y="30" width="96" height="96" fill="#E74C3C" fill-opacity="0.19" stroke="#C0392B" stroke-width="1.5"/>
+    <text x="670" y="44" font-size="12" fill="#C0392B">Local electrique</text>
+  </g>
+
+  <!-- Passerelles aux 4 coins -->
+  <g stroke="#2C3E50" stroke-width="2" fill="none">
+    <line x1="34" y1="504" x2="46" y2="516"/><line x1="34" y1="516" x2="46" y2="504"/>
+    <line x1="754" y1="504" x2="766" y2="516"/><line x1="754" y1="516" x2="766" y2="504"/>
+    <line x1="754" y1="24" x2="766" y2="36"/><line x1="754" y1="36" x2="766" y2="24"/>
+    <line x1="34" y1="24" x2="46" y2="36"/><line x1="34" y1="36" x2="46" y2="24"/>
+  </g>
+  <g fill="#2C3E50" font-size="10">
+    <text x="50" y="516">GW-01</text>
+    <text x="720" y="516">GW-02</text>
+    <text x="720" y="22">GW-03</text>
+    <text x="50" y="22">GW-04</text>
+  </g>
+
+  <!--
+    Equipements : chaque tag boucle sur une trajectoire de 15 s.
+    Deux tags (TAG-04, TAG-08) frolent le Local electrique et virent au rouge
+    pendant la periode ou ils sont dedans, pour illustrer l'alerte de zone.
+  -->
+  <defs>
+    <!-- Trajectoires : petites boucles autour d'un point moyen -->
+    <path id="t1" d="M120,470 L160,450 L180,478 L140,490 Z"/>
+    <path id="t2" d="M300,400 L360,380 L340,430 L280,420 Z"/>
+    <path id="t3" d="M430,340 L490,320 L510,370 L450,380 Z"/>
+    <path id="t4" d="M600,180 L660,140 L710,80 L680,60 L620,140 L580,200 Z"/>
+    <path id="t5" d="M250,240 L310,220 L330,270 L270,280 Z"/>
+    <path id="t6" d="M540,240 L590,220 L620,280 L560,290 Z"/>
+    <path id="t7" d="M380,180 L440,160 L460,210 L400,220 Z"/>
+    <path id="t8" d="M560,160 L640,120 L710,80 L700,60 L640,80 L580,120 Z"/>
+    <path id="t9" d="M400,440 L460,420 L480,470 L420,480 Z"/>
+    <path id="t10" d="M180,180 L240,160 L260,210 L200,220 Z"/>
+  </defs>
+
+  <!-- Style commun -->
+  <style>
+    .pt { fill: #2177BB; stroke: #FFFFFF; stroke-width: 1.5; }
+    .lbl { fill: #1A5D92; font-size: 11px; font-weight: 700; }
+    .lbl-alert { fill: #943126; }
+  </style>
+
+  <g>
+    <circle r="5" class="pt">
+      <animateMotion dur="15s" repeatCount="indefinite" rotate="0">
+        <mpath href="#t1"/>
+      </animateMotion>
+    </circle>
+    <text class="lbl" dx="7" dy="-6">
+      TAG-01
+      <animateMotion dur="15s" repeatCount="indefinite" rotate="0">
+        <mpath href="#t1"/>
+      </animateMotion>
+    </text>
+  </g>
+
+  <g>
+    <circle r="5" class="pt">
+      <animateMotion dur="15s" begin="1s" repeatCount="indefinite" rotate="0">
+        <mpath href="#t2"/>
+      </animateMotion>
+    </circle>
+    <text class="lbl" dx="7" dy="-6">
+      TAG-02
+      <animateMotion dur="15s" begin="1s" repeatCount="indefinite" rotate="0">
+        <mpath href="#t2"/>
+      </animateMotion>
+    </text>
+  </g>
+
+  <g>
+    <circle r="5" class="pt">
+      <animateMotion dur="15s" begin="2s" repeatCount="indefinite" rotate="0">
+        <mpath href="#t3"/>
+      </animateMotion>
+    </circle>
+    <text class="lbl" dx="7" dy="-6">
+      TAG-03
+      <animateMotion dur="15s" begin="2s" repeatCount="indefinite" rotate="0">
+        <mpath href="#t3"/>
+      </animateMotion>
+    </text>
+  </g>
+
+  <!-- TAG-04 : passe dans Local electrique entre 5.5s et 8.5s / 15s -->
+  <g>
+    <circle r="5">
+      <animate attributeName="fill" dur="15s" repeatCount="indefinite"
+               values="#2177BB;#2177BB;#C0392B;#C0392B;#2177BB;#2177BB"
+               keyTimes="0;0.36;0.4;0.56;0.6;1"/>
+      <animate attributeName="stroke" dur="15s" repeatCount="indefinite"
+               values="#FFFFFF" keyTimes="0" fill="freeze"/>
+      <animate attributeName="stroke-width" dur="15s" repeatCount="indefinite"
+               values="1.5" keyTimes="0" fill="freeze"/>
+      <animateMotion dur="15s" repeatCount="indefinite" rotate="0">
+        <mpath href="#t4"/>
+      </animateMotion>
+    </circle>
+    <text dx="7" dy="-6" font-size="11" font-weight="700">
+      <animate attributeName="fill" dur="15s" repeatCount="indefinite"
+               values="#1A5D92;#1A5D92;#943126;#943126;#1A5D92;#1A5D92"
+               keyTimes="0;0.36;0.4;0.56;0.6;1"/>
+      TAG-04
+      <animateMotion dur="15s" repeatCount="indefinite" rotate="0">
+        <mpath href="#t4"/>
+      </animateMotion>
+    </text>
+  </g>
+
+  <g>
+    <circle r="5" class="pt">
+      <animateMotion dur="15s" begin="3s" repeatCount="indefinite" rotate="0">
+        <mpath href="#t5"/>
+      </animateMotion>
+    </circle>
+    <text class="lbl" dx="7" dy="-6">
+      TAG-05
+      <animateMotion dur="15s" begin="3s" repeatCount="indefinite" rotate="0">
+        <mpath href="#t5"/>
+      </animateMotion>
+    </text>
+  </g>
+
+  <g>
+    <circle r="5" class="pt">
+      <animateMotion dur="15s" begin="1.5s" repeatCount="indefinite" rotate="0">
+        <mpath href="#t6"/>
+      </animateMotion>
+    </circle>
+    <text class="lbl" dx="7" dy="-6">
+      TAG-06
+      <animateMotion dur="15s" begin="1.5s" repeatCount="indefinite" rotate="0">
+        <mpath href="#t6"/>
+      </animateMotion>
+    </text>
+  </g>
+
+  <g>
+    <circle r="5" class="pt">
+      <animateMotion dur="15s" begin="2.5s" repeatCount="indefinite" rotate="0">
+        <mpath href="#t7"/>
+      </animateMotion>
+    </circle>
+    <text class="lbl" dx="7" dy="-6">
+      TAG-07
+      <animateMotion dur="15s" begin="2.5s" repeatCount="indefinite" rotate="0">
+        <mpath href="#t7"/>
+      </animateMotion>
+    </text>
+  </g>
+
+  <!-- TAG-08 : passe dans Local electrique entre 4s et 6.5s / 15s (decalage) -->
+  <g>
+    <circle r="5">
+      <animate attributeName="fill" dur="15s" begin="4s" repeatCount="indefinite"
+               values="#2177BB;#2177BB;#C0392B;#C0392B;#2177BB;#2177BB"
+               keyTimes="0;0.26;0.3;0.43;0.46;1"/>
+      <animate attributeName="stroke" dur="15s" begin="4s" repeatCount="indefinite"
+               values="#FFFFFF" keyTimes="0" fill="freeze"/>
+      <animate attributeName="stroke-width" dur="15s" begin="4s" repeatCount="indefinite"
+               values="1.5" keyTimes="0" fill="freeze"/>
+      <animateMotion dur="15s" begin="4s" repeatCount="indefinite" rotate="0">
+        <mpath href="#t8"/>
+      </animateMotion>
+    </circle>
+    <text dx="7" dy="-6" font-size="11" font-weight="700">
+      <animate attributeName="fill" dur="15s" begin="4s" repeatCount="indefinite"
+               values="#1A5D92;#1A5D92;#943126;#943126;#1A5D92;#1A5D92"
+               keyTimes="0;0.26;0.3;0.43;0.46;1"/>
+      TAG-08
+      <animateMotion dur="15s" begin="4s" repeatCount="indefinite" rotate="0">
+        <mpath href="#t8"/>
+      </animateMotion>
+    </text>
+  </g>
+
+  <g>
+    <circle r="5" class="pt">
+      <animateMotion dur="15s" begin="0.5s" repeatCount="indefinite" rotate="0">
+        <mpath href="#t9"/>
+      </animateMotion>
+    </circle>
+    <text class="lbl" dx="7" dy="-6">
+      TAG-09
+      <animateMotion dur="15s" begin="0.5s" repeatCount="indefinite" rotate="0">
+        <mpath href="#t9"/>
+      </animateMotion>
+    </text>
+  </g>
+
+  <g>
+    <circle r="5" class="pt">
+      <animateMotion dur="15s" begin="3.5s" repeatCount="indefinite" rotate="0">
+        <mpath href="#t10"/>
+      </animateMotion>
+    </circle>
+    <text class="lbl" dx="7" dy="-6">
+      TAG-10
+      <animateMotion dur="15s" begin="3.5s" repeatCount="indefinite" rotate="0">
+        <mpath href="#t10"/>
+      </animateMotion>
+    </text>
+  </g>
+
+  <!-- Legende bas -->
+  <g font-size="11" fill="#6B7684">
+    <text x="40" y="533">Illustration synthetique — capture reelle de l'app MAUI a venir</text>
+  </g>
+</svg>
