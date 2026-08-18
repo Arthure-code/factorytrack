@@ -2,8 +2,8 @@
 
 [![CI](https://github.com/Arthure-code/factorytrack/actions/workflows/ci.yml/badge.svg)](https://github.com/Arthure-code/factorytrack/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/Arthure-code/factorytrack/actions/workflows/codeql.yml/badge.svg)](https://github.com/Arthure-code/factorytrack/actions/workflows/codeql.yml)
-[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=arthure-code_factorytrack&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=arthure-code_factorytrack)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=arthure-code_factorytrack&metric=coverage)](https://sonarcloud.io/summary/new_code?id=arthure-code_factorytrack)
+[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=Arthure-code_factorytrack&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Arthure-code_factorytrack)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=Arthure-code_factorytrack&metric=coverage)](https://sonarcloud.io/summary/new_code?id=Arthure-code_factorytrack)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 Real-time indoor location system (RTLS) for tracking equipment inside a
