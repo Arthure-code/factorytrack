@@ -1,0 +1,47 @@
+# Analyse statique de securite via CodeQL. Gratuit sur repos publics.
+# Resultats visibles sous Security > Code scanning alerts.
+
+name: CodeQL
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  schedule:
+    # Lundi 6h UTC : refait l'analyse sans commit, pour attraper les CVE
+    # decouvertes apres coup dans le code deja en place.
+    - cron: '0 6 * * 1'
+
+jobs:
+  analyze:
+    name: Analyse CodeQL (C#)
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Initialiser CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: csharp
+          # Build necessaire pour C# : CodeQL trace la compilation.
+          build-mode: manual
+
+      - name: Build back-end (Server.slnf)
+        run: |
+          dotnet restore FactoryTrack.Server.slnf
+          dotnet build FactoryTrack.Server.slnf --configuration Release --no-restore
+
+      - name: Analyser
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/language:csharp'

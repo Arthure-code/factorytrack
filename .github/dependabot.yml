@@ -1,0 +1,63 @@
+# Dependabot : PRs automatiques pour patcher CVE et suivre les versions.
+# Doc : https://docs.github.com/en/code-security/dependabot
+
+version: 2
+updates:
+
+  # Dependances NuGet du back-end + mobile.
+  # Tous les .csproj sont scannes recursivement depuis la racine.
+  - package-ecosystem: 'nuget'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+    open-pull-requests-limit: 10
+    groups:
+      # Regroupe les updates mineures/patch pour eviter le bruit :
+      # une PR par famille au lieu de dizaines.
+      microsoft-runtime:
+        patterns:
+          - 'Microsoft.Extensions.*'
+          - 'Microsoft.EntityFrameworkCore*'
+          - 'Microsoft.AspNetCore.*'
+        update-types:
+          - 'minor'
+          - 'patch'
+      tests:
+        patterns:
+          - 'xunit*'
+          - 'FluentAssertions'
+          - 'coverlet.*'
+          - 'Microsoft.NET.Test.Sdk'
+          - 'Testcontainers*'
+        update-types:
+          - 'minor'
+          - 'patch'
+      grpc:
+        patterns:
+          - 'Grpc.*'
+          - 'Google.Protobuf*'
+        update-types:
+          - 'minor'
+          - 'patch'
+
+  # Actions GitHub utilisees dans les workflows.
+  - package-ecosystem: 'github-actions'
+    directory: '/'
+    schedule:
+      interval: 'weekly'
+      day: 'monday'
+
+  # Base Docker images.
+  - package-ecosystem: 'docker'
+    directory: '/src/FactoryTrack.Api'
+    schedule:
+      interval: 'weekly'
+  - package-ecosystem: 'docker'
+    directory: '/src/FactoryTrack.Ingestion'
+    schedule:
+      interval: 'weekly'
+  - package-ecosystem: 'docker'
+    directory: '/src/FactoryTrack.Simulator'
+    schedule:
+      interval: 'weekly'

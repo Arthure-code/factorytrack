@@ -1,5 +1,11 @@
 # FactoryTrack — Indoor Asset Tracker (.NET)
 
+[![CI](https://github.com/Arthure-code/factorytrack/actions/workflows/ci.yml/badge.svg)](https://github.com/Arthure-code/factorytrack/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/Arthure-code/factorytrack/actions/workflows/codeql.yml/badge.svg)](https://github.com/Arthure-code/factorytrack/actions/workflows/codeql.yml)
+[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=arthure-code_factorytrack&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=arthure-code_factorytrack)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=arthure-code_factorytrack&metric=coverage)](https://sonarcloud.io/summary/new_code?id=arthure-code_factorytrack)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 Real-time indoor location system (RTLS) for tracking equipment inside a
 factory. Built with .NET 9, ASP.NET Core, gRPC, SignalR, PostgreSQL,
 TimescaleDB, and .NET MAUI.
@@ -224,9 +230,60 @@ hardware.
 
 ---
 
+## Security
+
+See [SECURITY.md](SECURITY.md) for the disclosure policy and known limits.
+
+What's active on this repository:
+
+- **Secret scanning + push protection** (GitHub defaults for public repos)
+- **Dependabot** weekly updates (NuGet, Docker, GitHub Actions), grouped
+  per family to avoid PR noise — see [.github/dependabot.yml](.github/dependabot.yml)
+- **CodeQL** static analysis for C# on every push + weekly schedule —
+  see [.github/workflows/codeql.yml](.github/workflows/codeql.yml)
+- **Trivy** scans Docker images for HIGH/CRITICAL CVEs and blocks the
+  pipeline
+- **SonarCloud** quality gate + coverage tracked on every push
+- **`dotnet list package --vulnerable --include-transitive`** fails the
+  build on known CVEs in direct or transitive NuGet deps
+
+## Forking / running your own instance
+
+The CI expects a few things to be set up on your side:
+
+1. Create a **SonarCloud** project (organization + project key).
+2. On GitHub → Settings → Secrets and variables → Actions:
+   - Add secret `SONAR_TOKEN` (from SonarCloud → My Account → Security)
+   - Add repository variable `SONAR_ORGANIZATION`
+   - Add repository variable `SONAR_PROJECT_KEY`
+3. On GitHub → Settings → Code security:
+   - Enable **Push protection** (blocks accidental secret commits)
+   - Enable **Dependabot version updates** if not already on
+4. On GitHub → Settings → Branches:
+   - Add a rule on `main`: require PR + CI passing before merge
+
+The CI skips SonarCloud steps automatically if `SONAR_TOKEN` is missing,
+so the workflow won't fail on a fresh fork.
+
+## CI pipelines
+
+Three equivalent pipelines are maintained so this repo demonstrates
+comfort with the mainstream CI ecosystems:
+
+- **GitHub Actions** — [.github/workflows/ci.yml](.github/workflows/ci.yml)
+  (primary, runs on every push to this repo)
+- **Azure DevOps** — [azure-pipelines.yml](azure-pipelines.yml)
+  (with ACR push and Azure Container Apps deployment skeleton)
+- **GitLab CI** — [.gitlab-ci.yml](.gitlab-ci.yml)
+
+All three build against `FactoryTrack.Server.slnf` (a solution filter
+that excludes the MAUI project — its workload isn't installed on Linux
+runners) and run OpenCover coverage that SonarCloud reads directly.
+
 ## Stack
 
 .NET 9 · ASP.NET Core · gRPC · SignalR · Entity Framework Core ·
 PostgreSQL · TimescaleDB · .NET MAUI · SkiaSharp · CommunityToolkit.Mvvm ·
 Docker Compose · xUnit · FluentAssertions · Testcontainers · Serilog ·
-GitLab CI · GitHub Actions
+GitHub Actions · CodeQL · Trivy · SonarCloud · Dependabot ·
+Azure DevOps · GitLab CI

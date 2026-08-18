@@ -30,10 +30,17 @@ Platforms/Android/obj/
 # Secrets et configuration locale
 appsettings.Development.local.json
 appsettings.Production.json
+appsettings.*.Local.json
+secrets.json
+*.pubxml.user
 *.pfx
+*.p12
 *.keystore
+*.jks
+*.key
 .env
 .env.local
+.env.*.local
 
 # Systeme
 .DS_Store
