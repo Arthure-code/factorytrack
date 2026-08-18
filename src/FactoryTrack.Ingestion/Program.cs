@@ -1,6 +1,6 @@
 using FactoryTrack.Domain.Interfaces;
 using FactoryTrack.Domain.Options;
-using FactoryTrack.Domain.Positionnement;
+using FactoryTrack.Positioning;
 using FactoryTrack.Infrastructure;
 using FactoryTrack.Ingestion.Services;
 using Microsoft.Extensions.Options;

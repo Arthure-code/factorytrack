@@ -1,7 +1,7 @@
 using FactoryTrack.Domain.Entites;
 using FactoryTrack.Domain.Enums;
 using FactoryTrack.Domain.Options;
-using FactoryTrack.Domain.Positionnement;
+using FactoryTrack.Positioning;
 using FluentAssertions;
 using Xunit;
 

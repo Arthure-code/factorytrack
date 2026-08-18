@@ -16,5 +16,6 @@
     <ProjectReference Include="..\FactoryTrack.Domain\FactoryTrack.Domain.csproj" />
     <ProjectReference Include="..\FactoryTrack.Contracts\FactoryTrack.Contracts.csproj" />
     <ProjectReference Include="..\FactoryTrack.Infrastructure\FactoryTrack.Infrastructure.csproj" />
+    <ProjectReference Include="..\FactoryTrack.Positioning\FactoryTrack.Positioning.csproj" />
   </ItemGroup>
 </Project>

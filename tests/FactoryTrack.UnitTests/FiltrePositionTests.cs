@@ -1,4 +1,4 @@
-using FactoryTrack.Domain.Positionnement;
+using FactoryTrack.Positioning;
 using FluentAssertions;
 using Xunit;
 

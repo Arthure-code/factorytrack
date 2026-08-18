@@ -1,4 +1,4 @@
-namespace FactoryTrack.Domain.Positionnement;
+namespace FactoryTrack.Positioning;
 
 /// <summary>
 /// Conversion RSSI vers distance par le modele log-distance :

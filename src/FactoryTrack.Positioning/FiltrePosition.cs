@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace FactoryTrack.Domain.Positionnement;
+namespace FactoryTrack.Positioning;
 
 /// <summary>
 /// Lissage exponentiel par balise, avec rejet des sauts aberrants.

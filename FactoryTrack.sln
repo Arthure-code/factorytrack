@@ -20,6 +20,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{340D5CF6-E43
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FactoryTrack.Mobile", "src\FactoryTrack.Mobile\FactoryTrack.Mobile.csproj", "{AF60F968-D8F7-4906-B3A7-469C90AA6B35}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FactoryTrack.Positioning", "src\FactoryTrack.Positioning\FactoryTrack.Positioning.csproj", "{6007CFA8-8C1F-47E2-9DF8-9284CD2DD8C3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{971A0DDD-4ECB-4753-B5C4-3B4DCF79CC20}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FactoryTrack.IntegrationTests", "tests\FactoryTrack.IntegrationTests\FactoryTrack.IntegrationTests.csproj", "{DA721C5E-B4E1-4D1C-A9A4-621FE6A12DB5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,8 +64,18 @@ Global
 		{AF60F968-D8F7-4906-B3A7-469C90AA6B35}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF60F968-D8F7-4906-B3A7-469C90AA6B35}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF60F968-D8F7-4906-B3A7-469C90AA6B35}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6007CFA8-8C1F-47E2-9DF8-9284CD2DD8C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6007CFA8-8C1F-47E2-9DF8-9284CD2DD8C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6007CFA8-8C1F-47E2-9DF8-9284CD2DD8C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6007CFA8-8C1F-47E2-9DF8-9284CD2DD8C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA721C5E-B4E1-4D1C-A9A4-621FE6A12DB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA721C5E-B4E1-4D1C-A9A4-621FE6A12DB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA721C5E-B4E1-4D1C-A9A4-621FE6A12DB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA721C5E-B4E1-4D1C-A9A4-621FE6A12DB5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{AF60F968-D8F7-4906-B3A7-469C90AA6B35} = {340D5CF6-E436-4276-B537-F562FE31B0F7}
+		{6007CFA8-8C1F-47E2-9DF8-9284CD2DD8C3} = {340D5CF6-E436-4276-B537-F562FE31B0F7}
+		{DA721C5E-B4E1-4D1C-A9A4-621FE6A12DB5} = {971A0DDD-4ECB-4753-B5C4-3B4DCF79CC20}
 	EndGlobalSection
 EndGlobal

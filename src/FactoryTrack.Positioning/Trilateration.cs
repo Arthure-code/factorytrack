@@ -1,4 +1,4 @@
-namespace FactoryTrack.Domain.Positionnement;
+namespace FactoryTrack.Positioning;
 
 /// <summary>
 /// Resolution par moindres carres. En soustrayant l'equation de la premiere ancre

@@ -2,7 +2,7 @@ using FactoryTrack.Domain.Entites;
 using FactoryTrack.Domain.Enums;
 using FactoryTrack.Domain.Options;
 
-namespace FactoryTrack.Domain.Positionnement;
+namespace FactoryTrack.Positioning;
 
 /// <summary>
 /// Chaine complete : mesures RSSI d'une meme balise vers une position filtree.

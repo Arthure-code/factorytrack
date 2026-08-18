@@ -2,7 +2,7 @@ using FactoryTrack.Contracts.Grpc;
 using FactoryTrack.Domain.Entites;
 using FactoryTrack.Domain.Interfaces;
 using FactoryTrack.Domain.Options;
-using FactoryTrack.Domain.Positionnement;
+using FactoryTrack.Positioning;
 using FactoryTrack.Infrastructure.Depots;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
