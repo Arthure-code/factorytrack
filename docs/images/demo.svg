@@ -25,6 +25,33 @@
     <text x="72" y="5" font-size="13" fill="#6B7684">· 4 machines · 9 equipements mobiles</text>
   </g>
 
+  <!--
+    Cloche + menu 3 points a droite du bandeau (miroir de l'UI MAUI).
+    Le badge de la cloche s'anime pour coller aux alertes qui apparaissent
+    quand un tag entre dans le Local electrique ou sort du perimetre.
+  -->
+  <g transform="translate(710,58)">
+    <text x="0" y="10" font-size="20" text-anchor="middle" fill="#303A4A">🔔</text>
+    <!-- Badge : 0 au debut, monte a 1, 2, 3 au fil des alertes du cycle 15 s -->
+    <g transform="translate(10,-6)">
+      <circle r="9" fill="#C0392B" stroke="#FFFFFF" stroke-width="1.5"/>
+      <text x="0" y="4" font-size="10" font-weight="700" text-anchor="middle" fill="#FFFFFF">
+        <animate attributeName="opacity" dur="15s" repeatCount="indefinite"
+                 values="0;0;1;1;1;1" keyTimes="0;0.26;0.3;0.4;0.6;1"/>
+        <tspan>
+          <animate attributeName="baseline-shift" dur="15s" repeatCount="indefinite"
+                   values="0;0;0;0;0" keyTimes="0;0.25;0.5;0.75;1"/>
+        </tspan>
+        3
+      </text>
+      <animate attributeName="opacity" dur="15s" repeatCount="indefinite"
+               values="0;0;1;1;1;1" keyTimes="0;0.26;0.3;0.4;0.6;1"/>
+    </g>
+  </g>
+  <g transform="translate(750,58)">
+    <text x="0" y="12" font-size="22" font-weight="700" text-anchor="middle" fill="#303A4A">⋮</text>
+  </g>
+
   <!-- Cadre du plan (720x480 = 60m x 40m a 12 px/m), decale a y=90 -->
   <rect x="40" y="90" width="720" height="480" fill="#F6F7F9" stroke="#303A4A" stroke-width="2"/>
 
