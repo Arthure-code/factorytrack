@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option csharp_namespace = "FactoryTrack.Contracts.Grpc";
+
+package factorytrack.ingestion.v1;
+
+// Point d'entree unique des mesures radio.
+// Trois producteurs possibles : passerelles reelles, simulateur, rejeu de jeu de donnees.
+service ServiceIngestion {
+  // Flux montant : la passerelle pousse ses mesures en continu.
+  rpc EnvoyerMesures(stream MesureRssiMessage) returns (AccuseReception);
+
+  rpc Ping(RequetePing) returns (ReponsePing);
+}
+
+message MesureRssiMessage {
+  string balise_id = 1;
+  string passerelle_id = 2;
+  int32 rssi = 3;
+  TypeTechnologie technologie = 4;
+  google.protobuf.Timestamp horodatage = 5;
+}
+
+enum TypeTechnologie {
+  TYPE_TECHNOLOGIE_BLUETOOTH = 0;
+  TYPE_TECHNOLOGIE_UWB = 1;
+}
+
+message AccuseReception {
+  int32 recues = 1;
+  int32 acceptees = 2;
+  int32 rejetees_doublon = 3;
+  int32 rejetees_hors_ordre = 4;
+  int32 positions_calculees = 5;
+}
+
+message RequetePing {}
+
+message ReponsePing {
+  string version = 1;
+  google.protobuf.Timestamp horodatage_serveur = 2;
+}

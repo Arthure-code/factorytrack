@@ -1,0 +1,40 @@
+# .NET
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+*.user
+*.suo
+*.userprefs
+project.lock.json
+artifacts/
+
+# Visual Studio / Rider / VS Code
+.vs/
+.idea/
+.vscode/
+*.swp
+
+# Tests et couverture
+[Tt]est[Rr]esult*/
+coverage*.xml
+coverage*.json
+*.coverage
+.coverlet/
+
+# MAUI (a venir)
+*.binlog
+Platforms/Android/bin/
+Platforms/Android/obj/
+
+# Secrets et configuration locale
+appsettings.Development.local.json
+appsettings.Production.json
+*.pfx
+*.keystore
+.env
+.env.local
+
+# Systeme
+.DS_Store
+Thumbs.db

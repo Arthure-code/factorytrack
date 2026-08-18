@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, 'feature/**', 'fix/**' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-et-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Installer le SDK .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restaurer
+        run: dotnet restore
+
+      - name: Compiler
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Tester
+        run: dotnet test --configuration Release --no-build --collect:"XPlat Code Coverage" --results-directory ./couverture
+
+      - name: Publier le rapport de couverture
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: couverture
+          path: ./couverture
+
+  images-docker:
+    runs-on: ubuntu-latest
+    needs: build-et-tests
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Construire les images
+        run: docker compose build
+
+      - name: Verifier que la pile demarre
+        run: |
+          docker compose up -d
+          sleep 45
+          docker compose ps
+          curl --fail --silent --show-error http://localhost:8080/health
+          docker compose down -v

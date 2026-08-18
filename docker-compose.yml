@@ -1,0 +1,70 @@
+services:
+  timescaledb:
+    image: timescale/timescaledb:latest-pg16
+    container_name: factorytrack-db
+    environment:
+      POSTGRES_DB: factorytrack
+      POSTGRES_USER: factorytrack
+      POSTGRES_PASSWORD: factorytrack
+    ports:
+      - "5432:5432"
+    volumes:
+      - donnees-timescale:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U factorytrack -d factorytrack"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: src/FactoryTrack.Api/Dockerfile
+    container_name: factorytrack-api
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__FactoryTrack: "Host=timescaledb;Port=5432;Database=factorytrack;Username=factorytrack;Password=factorytrack"
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  ingestion:
+    build:
+      context: .
+      dockerfile: src/FactoryTrack.Ingestion/Dockerfile
+    container_name: factorytrack-ingestion
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__FactoryTrack: "Host=timescaledb;Port=5432;Database=factorytrack;Username=factorytrack;Password=factorytrack"
+      Api__UrlHub: "http://api:8080/hubs/positions"
+    ports:
+      - "8081:8080"
+
+  simulateur:
+    build:
+      context: .
+      dockerfile: src/FactoryTrack.Simulator/Dockerfile
+    container_name: factorytrack-simulateur
+    depends_on:
+      - ingestion
+    environment:
+      Simulateur__UrlIngestion: "http://ingestion:8080"
+      Simulateur__NombreEquipements: "20"
+      Simulateur__PeriodeMs: "1000"
+
+volumes:
+  donnees-timescale:

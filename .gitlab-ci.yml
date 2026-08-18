@@ -1,0 +1,42 @@
+# Equivalent GitLab du pipeline GitHub Actions.
+# L'offre Akkodis cite GitLab nommement : les deux sont maintenus.
+
+stages:
+  - build
+  - test
+  - docker
+
+variables:
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  DOTNET_NOLOGO: "1"
+
+default:
+  image: mcr.microsoft.com/dotnet/sdk:9.0
+
+compilation:
+  stage: build
+  script:
+    - dotnet restore
+    - dotnet build --configuration Release --no-restore
+  artifacts:
+    expire_in: 1 hour
+    paths:
+      - "**/bin/Release/"
+
+tests:
+  stage: test
+  script:
+    - dotnet test --configuration Release --collect:"XPlat Code Coverage" --results-directory ./couverture
+  coverage: '/Total\s*\|\s*(\d+(?:\.\d+)?)%/'
+  artifacts:
+    when: always
+    paths:
+      - couverture/
+
+images:
+  stage: docker
+  image: docker:27
+  services:
+    - docker:27-dind
+  script:
+    - docker compose build
