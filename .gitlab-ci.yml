@@ -1,10 +1,9 @@
-# Pipeline CI GitLab.
+# Pipeline CI GitLab (miroir minimal du pipeline Azure DevOps principal).
 #
-# Le runner Linux (dotnet/sdk:9.0) n'embarque pas le workload MAUI : ni
-# net9.0-android ni net9.0-windows n'y sont buildables. On cible donc
-# explicitement les projets serveur pour build/test.
-# Le client MAUI est verifie via GitHub Actions sur runner Windows,
-# ou compile localement.
+# Le runner Linux (dotnet/sdk:9.0) n'embarque pas le workload MAUI : on
+# passe par FactoryTrack.Server.slnf, un solution filter qui exclut le
+# projet mobile. Le client MAUI est teste sur runner Windows via le
+# pipeline Azure DevOps (voir azure-pipelines.yml).
 
 stages:
   - build
@@ -14,15 +13,7 @@ stages:
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: "1"
   DOTNET_NOLOGO: "1"
-  # Projets non-MAUI - le glob par defaut de "dotnet build" prendrait tout le repo.
-  PROJETS_SERVEUR: >-
-    src/FactoryTrack.Domain/FactoryTrack.Domain.csproj
-    src/FactoryTrack.Contracts/FactoryTrack.Contracts.csproj
-    src/FactoryTrack.Infrastructure/FactoryTrack.Infrastructure.csproj
-    src/FactoryTrack.Positioning/FactoryTrack.Positioning.csproj
-    src/FactoryTrack.Api/FactoryTrack.Api.csproj
-    src/FactoryTrack.Ingestion/FactoryTrack.Ingestion.csproj
-    src/FactoryTrack.Simulator/FactoryTrack.Simulator.csproj
+  SOLUTION_SERVEUR: 'FactoryTrack.Server.slnf'
 
 default:
   image: mcr.microsoft.com/dotnet/sdk:9.0
@@ -30,14 +21,13 @@ default:
 compilation:
   stage: build
   script:
-    - |
-      for p in $PROJETS_SERVEUR; do
-        dotnet build "$p" --configuration Release
-      done
+    - dotnet restore $SOLUTION_SERVEUR
+    - dotnet build $SOLUTION_SERVEUR --configuration Release --no-restore
   artifacts:
     expire_in: 1 hour
     paths:
       - "src/**/bin/Release/"
+      - "tests/**/bin/Release/"
 
 tests-unitaires:
   stage: test
@@ -62,7 +52,6 @@ tests-integration:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: ""
   before_script:
-    # Le SDK .NET n'est pas dans l'image docker:27, on l'ajoute.
     - apk add --no-cache dotnet9-sdk
   script:
     - dotnet test tests/FactoryTrack.IntegrationTests/FactoryTrack.IntegrationTests.csproj

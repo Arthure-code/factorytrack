@@ -1,0 +1,16 @@
+{
+  "solution": {
+    "path": "FactoryTrack.sln",
+    "projects": [
+      "src\\FactoryTrack.Domain\\FactoryTrack.Domain.csproj",
+      "src\\FactoryTrack.Contracts\\FactoryTrack.Contracts.csproj",
+      "src\\FactoryTrack.Infrastructure\\FactoryTrack.Infrastructure.csproj",
+      "src\\FactoryTrack.Positioning\\FactoryTrack.Positioning.csproj",
+      "src\\FactoryTrack.Api\\FactoryTrack.Api.csproj",
+      "src\\FactoryTrack.Ingestion\\FactoryTrack.Ingestion.csproj",
+      "src\\FactoryTrack.Simulator\\FactoryTrack.Simulator.csproj",
+      "tests\\FactoryTrack.UnitTests\\FactoryTrack.UnitTests.csproj",
+      "tests\\FactoryTrack.IntegrationTests\\FactoryTrack.IntegrationTests.csproj"
+    ]
+  }
+}

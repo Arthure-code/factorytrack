@@ -1,0 +1,300 @@
+# Pipeline DevSecOps pour FactoryTrack.
+#
+# Trois choses cohabitent :
+#   - Back-end .NET (7 projets serveur, 2 projets de tests) : buildable sur
+#     Ubuntu, testable avec Testcontainers grace au Docker deja present sur
+#     les runners hostes.
+#   - Client MAUI : buildable uniquement sur runner Windows avec le workload
+#     MAUI. Job separe.
+#   - Images Docker (Api, Ingestion, Simulator) : construites uniquement sur
+#     main pour eviter la charge inutile.
+#
+# La cible de deploiement (Azure Container Apps ou AKS) est laissee en
+# skeleton commente : elle depend d'une souscription active et d'un service
+# connection configure, hors scope portfolio.
+
+trigger:
+  branches:
+    include:
+      - main
+      - feature/*
+      - fix/*
+
+pr:
+  branches:
+    include:
+      - main
+
+variables:
+  # Service connections a creer dans Project Settings > Service connections.
+  sonarServiceConnection: 'sc-sonarcloud-factorytrack'
+  containerRegistryServiceConnection: 'sc-acr-factorytrack'
+  containerRegistryName: 'crfactorytrack'  # ACR name.azurecr.io
+
+  # Cle projet/organisation SonarCloud.
+  sonarOrganization: 'arthure-code'
+  sonarProjectKey: 'arthure-code_factorytrack'
+  sonarProjectName: 'FactoryTrack'
+
+  dotnetSdkVersion: '9.0.x'
+  buildConfiguration: 'Release'
+
+
+stages:
+
+# ============================================================
+# BACK-END : BUILD + TESTS + SONARCLOUD + AUDIT
+# ============================================================
+
+- stage: Backend
+  displayName: 'Back-end .NET (Linux)'
+
+  jobs:
+
+  - job: BuildTestScan
+    displayName: 'Build + tests + SonarCloud'
+    pool:
+      vmImage: 'ubuntu-latest'
+
+    steps:
+
+    - checkout: self
+      fetchDepth: 0  # SonarCloud a besoin de l'historique pour le blame
+      displayName: 'Checkout complet (Sonar blame)'
+
+    - task: UseDotNet@2
+      displayName: 'Installer .NET SDK 9'
+      inputs:
+        version: '$(dotnetSdkVersion)'
+
+    - task: Cache@2
+      displayName: 'Cache NuGet'
+      inputs:
+        key: 'nuget | "$(Agent.OS)" | **/*.csproj'
+        restoreKeys: |
+          nuget | "$(Agent.OS)"
+        path: '$(NUGET_PACKAGES)'
+      env:
+        NUGET_PACKAGES: '$(Pipeline.Workspace)/.nuget/packages'
+
+    # SonarCloud DOIT etre prepare AVANT le build : le scanner s'accroche a MSBuild.
+    - task: SonarCloudPrepare@4
+      displayName: 'Preparer analyse SonarCloud (MSBuild)'
+      inputs:
+        SonarCloud: '$(sonarServiceConnection)'
+        organization: '$(sonarOrganization)'
+        scannerMode: 'MSBuild'
+        projectKey: '$(sonarProjectKey)'
+        projectName: '$(sonarProjectName)'
+        extraProperties: |
+          sonar.exclusions=src/FactoryTrack.Mobile/**,**/obj/**,**/bin/**,db/init/**
+          sonar.coverage.exclusions=tests/**,src/FactoryTrack.Simulator/**,src/FactoryTrack.Mobile/**
+          sonar.cs.opencover.reportsPaths=$(Agent.TempDirectory)/coverage/*.opencover.xml
+          sonar.cs.vstest.reportsPaths=$(Agent.TempDirectory)/tests/*.trx
+
+    - script: |
+        set -euo pipefail
+        dotnet restore FactoryTrack.Server.slnf
+      displayName: 'dotnet restore (projets serveur)'
+
+    - script: |
+        set -euo pipefail
+        dotnet build FactoryTrack.Server.slnf \
+          --configuration $(buildConfiguration) \
+          --no-restore
+      displayName: 'dotnet build (Release)'
+
+    # Tests unitaires + integration. Testcontainers demarre TimescaleDB via le
+    # Docker deja present sur ubuntu-latest ; pas besoin de docker-in-docker.
+    - script: |
+        set -euo pipefail
+        mkdir -p "$(Agent.TempDirectory)/coverage" "$(Agent.TempDirectory)/tests"
+
+        for projet in tests/FactoryTrack.UnitTests tests/FactoryTrack.IntegrationTests; do
+          nom=$(basename "$projet")
+          dotnet test "$projet/$nom.csproj" \
+            --configuration $(buildConfiguration) \
+            --no-build \
+            --logger "trx;LogFileName=$(Agent.TempDirectory)/tests/$nom.trx" \
+            -p:CollectCoverage=true \
+            -p:CoverletOutputFormat=opencover \
+            -p:CoverletOutput="$(Agent.TempDirectory)/coverage/$nom.opencover.xml"
+        done
+      displayName: 'Tests + couverture (OpenCover)'
+
+    - task: PublishTestResults@2
+      displayName: 'Publier les resultats de tests'
+      condition: succeededOrFailed()
+      inputs:
+        testResultsFormat: 'VSTest'
+        testResultsFiles: '$(Agent.TempDirectory)/tests/*.trx'
+        mergeTestResults: true
+
+    - task: SonarCloudAnalyze@4
+      displayName: 'Analyser avec SonarCloud'
+      inputs:
+        jdkversion: 'JAVA_HOME_17_X64'
+
+    # Quality gate publie uniquement sur main : sur les branches feature, on
+    # laisse l'analyse remonter mais on ne bloque pas le pipeline.
+    - task: SonarCloudPublish@4
+      displayName: 'Publier le Quality Gate'
+      condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+      inputs:
+        pollingTimeoutSec: '300'
+
+    # Audit dependances : echoue si des CVE sont trouvees sur les paquets
+    # NuGet directs ou transitifs. Signal precoce, complementaire de Sonar.
+    - script: |
+        set -euo pipefail
+        SORTIE=$(dotnet list FactoryTrack.Server.slnf package --vulnerable --include-transitive 2>&1 || true)
+        echo "$SORTIE"
+        if echo "$SORTIE" | grep -qE '>[[:space:]]+[A-Za-z0-9\.]+[[:space:]]'; then
+          echo "##vso[task.logissue type=error]Dependances vulnerables detectees."
+          exit 1
+        fi
+      displayName: 'Audit securite dependances (dotnet list --vulnerable)'
+
+
+# ============================================================
+# CLIENT MAUI (WINDOWS)
+# ============================================================
+
+- stage: Mobile
+  displayName: 'Client MAUI (Windows)'
+  dependsOn: []  # parallele au back-end
+
+  jobs:
+
+  - job: BuildMaui
+    displayName: 'Build MAUI (Android + Windows)'
+    pool:
+      vmImage: 'windows-latest'
+
+    steps:
+
+    - task: UseDotNet@2
+      displayName: 'Installer .NET SDK 9'
+      inputs:
+        version: '$(dotnetSdkVersion)'
+
+    - script: |
+        dotnet workload install maui-android maui-windows
+      displayName: 'Installer les workloads MAUI'
+
+    - script: |
+        dotnet restore src\FactoryTrack.Mobile\FactoryTrack.Mobile.csproj
+      displayName: 'dotnet restore (MAUI)'
+
+    - script: |
+        dotnet build src\FactoryTrack.Mobile\FactoryTrack.Mobile.csproj ^
+          -f net9.0-windows10.0.19041.0 ^
+          --configuration $(buildConfiguration) ^
+          --no-restore
+      displayName: 'Build MAUI Windows'
+
+    - script: |
+        dotnet build src\FactoryTrack.Mobile\FactoryTrack.Mobile.csproj ^
+          -f net9.0-android ^
+          --configuration $(buildConfiguration) ^
+          --no-restore
+      displayName: 'Build MAUI Android'
+
+
+# ============================================================
+# IMAGES DOCKER (MAIN UNIQUEMENT)
+# ============================================================
+
+- stage: Docker
+  displayName: 'Build & scan images Docker'
+  dependsOn:
+    - Backend
+  condition: >
+    and(
+      succeeded(),
+      eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+      ne(variables['Build.Reason'], 'PullRequest')
+    )
+
+  jobs:
+
+  - job: BuildImages
+    displayName: 'Build, scan Trivy, push ACR'
+    pool:
+      vmImage: 'ubuntu-latest'
+
+    steps:
+
+    - checkout: self
+
+    # Build local des 3 images serveur via le compose racine.
+    - script: |
+        set -euo pipefail
+        docker compose build api ingestion simulateur
+      displayName: 'docker compose build'
+
+    # Scan des vulnerabilites des images (Trivy). Echoue au niveau HIGH/CRITICAL.
+    - script: |
+        set -euo pipefail
+        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh \
+          | sh -s -- -b /usr/local/bin
+        for image in factorytrack-api factorytrack-ingestion factorytrack-simulateur; do
+          trivy image --severity HIGH,CRITICAL --exit-code 1 --no-progress "$image"
+        done
+      displayName: 'Trivy : scan des images'
+
+    # Push vers Azure Container Registry.
+    - task: AzureCLI@2
+      displayName: 'Push images vers ACR'
+      inputs:
+        azureSubscription: '$(containerRegistryServiceConnection)'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+          set -euo pipefail
+
+          az acr login --name "$(containerRegistryName)"
+          TAG="$(Build.SourceVersion)"
+
+          for image in factorytrack-api factorytrack-ingestion factorytrack-simulateur; do
+            distant="$(containerRegistryName).azurecr.io/$image:$TAG"
+            docker tag "$image" "$distant"
+            docker tag "$image" "$(containerRegistryName).azurecr.io/$image:latest"
+            docker push "$distant"
+            docker push "$(containerRegistryName).azurecr.io/$image:latest"
+          done
+
+
+# ============================================================
+# DEPLOIEMENT (SKELETON - A COMPLETER SELON LA CIBLE)
+# ============================================================
+#
+# Cible envisagee : Azure Container Apps (managed, scale to zero, moins
+# cher qu'AKS pour un projet portfolio).
+#
+# - stage: Deploy
+#   displayName: 'Deploiement Azure Container Apps'
+#   dependsOn: [Docker]
+#   condition: >
+#     and(
+#       succeeded(),
+#       eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+#       ne(variables['Build.Reason'], 'PullRequest')
+#     )
+#   jobs:
+#   - deployment: DeployToACA
+#     environment: 'factorytrack-production'
+#     strategy:
+#       runOnce:
+#         deploy:
+#           steps:
+#           - task: AzureCLI@2
+#             inputs:
+#               azureSubscription: '$(azureServiceConnection)'
+#               scriptType: 'bash'
+#               scriptLocation: 'inlineScript'
+#               inlineScript: |
+#                 az containerapp update \
+#                   --name factorytrack-api \
+#                   --resource-group rg-factorytrack \
+#                   --image $(containerRegistryName).azurecr.io/factorytrack-api:$(Build.SourceVersion)
