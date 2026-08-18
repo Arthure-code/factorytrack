@@ -10,12 +10,15 @@ namespace FactoryTrack.Api.Services;
 
 /// <summary>
 /// Balaie regulierement les dernieres positions et emet une alerte a l'entree
-/// ou la sortie d'une zone. Comme la surveillance du silence, on n'emet qu'aux
-/// transitions : signaler qu'un equipement "est toujours dans la zone" a chaque
-/// cycle inonderait l'UI et masquerait les vraies entrees.
+/// en zone interdite ou a la sortie d'un perimetre de securite. Comme la
+/// surveillance du silence, on n'emet qu'aux transitions.
 ///
-/// Les zones sont rechargees a chaque cycle : le referentiel change rarement et
-/// une politique manquee de quelques secondes n'a pas de consequence.
+/// Un equipement est en "etat d'alerte" pour une zone donnee :
+///   - zone interdite : quand il EST dedans
+///   - perimetre     : quand il n'est PAS dedans
+/// La transition (etait en alerte -> ne l'est plus, ou l'inverse) declenche
+/// l'evenement. Le meme AlerteZoneEntree/Sortie sert dans les deux cas ; le
+/// client distingue via les flags ZoneInterdite / ZonePerimetre du DTO.
 /// </summary>
 public class ServiceSurveillanceZones : BackgroundService
 {
@@ -25,9 +28,9 @@ public class ServiceSurveillanceZones : BackgroundService
     private readonly IHubContext<PositionHub> _hub;
     private readonly ILogger<ServiceSurveillanceZones> _journal;
 
-    // Zones dans lesquelles chaque balise se trouvait au dernier cycle. Sert a detecter
-    // les transitions. Cle : identifiant de balise ; valeur : ids des zones occupees.
-    private readonly ConcurrentDictionary<string, HashSet<Guid>> _zonesParBalise = new();
+    // Zones en etat d'alerte pour chaque balise au dernier cycle. Sert a detecter
+    // les transitions. Cle : identifiant de balise ; valeur : ids des zones en alerte.
+    private readonly ConcurrentDictionary<string, HashSet<Guid>> _alertesParBalise = new();
 
     public ServiceSurveillanceZones(
         IServiceScopeFactory fabriquePortee,
@@ -63,31 +66,46 @@ public class ServiceSurveillanceZones : BackgroundService
         var depotReferentiel = portee.ServiceProvider.GetRequiredService<IDepotReferentiel>();
 
         var zones = await depotReferentiel.ObtenirZonesAsync(jeton);
-        if (zones.Count == 0)
+        var zonesSurveillees = zones.Where(z => z.Interdite || z.Perimetre).ToList();
+        if (zonesSurveillees.Count == 0)
             return;
 
         var dernieres = await depotPositions.ObtenirDernieresAsync(etage: null, jeton);
 
         foreach (var position in dernieres)
         {
-            var zonesCourantes = zones
-                .Where(z => z.Contient(position.X, position.Y, position.Etage))
+            var enAlerteMaintenant = zonesSurveillees
+                .Where(z => EstEnAlerte(z, position))
                 .Select(z => z.Id)
                 .ToHashSet();
 
-            var zonesPrecedentes = _zonesParBalise.GetValueOrDefault(position.BaliseIdentifiant, new HashSet<Guid>());
+            var enAlerteAvant = _alertesParBalise.GetValueOrDefault(
+                position.BaliseIdentifiant, new HashSet<Guid>());
 
-            var entrees = zonesCourantes.Except(zonesPrecedentes);
-            var sorties = zonesPrecedentes.Except(zonesCourantes);
+            var entrees = enAlerteMaintenant.Except(enAlerteAvant);
+            var sorties = enAlerteAvant.Except(enAlerteMaintenant);
 
             foreach (var zoneId in entrees)
-                await EmettreAsync(NomsHub.Methodes.AlerteZoneEntree, position, zones.First(z => z.Id == zoneId), jeton);
+                await EmettreAsync(NomsHub.Methodes.AlerteZoneEntree, position,
+                    zonesSurveillees.First(z => z.Id == zoneId), jeton);
 
             foreach (var zoneId in sorties)
-                await EmettreAsync(NomsHub.Methodes.AlerteZoneSortie, position, zones.First(z => z.Id == zoneId), jeton);
+                await EmettreAsync(NomsHub.Methodes.AlerteZoneSortie, position,
+                    zonesSurveillees.First(z => z.Id == zoneId), jeton);
 
-            _zonesParBalise[position.BaliseIdentifiant] = zonesCourantes;
+            _alertesParBalise[position.BaliseIdentifiant] = enAlerteMaintenant;
         }
+    }
+
+    private static bool EstEnAlerte(Zone zone, Domain.Entites.Position position)
+    {
+        var dedans = zone.Contient(position.X, position.Y, position.Etage);
+        // Zone interdite : alerte quand on est dedans.
+        // Perimetre : alerte quand on est dehors (mais seulement si la zone
+        // concerne l'etage de l'equipement, sinon on ignore).
+        if (zone.Interdite) return dedans;
+        if (zone.Perimetre) return zone.Etage == position.Etage && !dedans;
+        return false;
     }
 
     private Task EmettreAsync(string methode, Domain.Entites.Position position, Zone zone, CancellationToken jeton)
@@ -97,6 +115,7 @@ public class ServiceSurveillanceZones : BackgroundService
             zone.Id,
             zone.Nom,
             zone.Interdite,
+            zone.Perimetre,
             zone.Etage,
             position.Horodatage);
 

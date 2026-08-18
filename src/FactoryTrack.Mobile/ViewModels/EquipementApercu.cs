@@ -18,6 +18,7 @@ public partial class EquipementApercu : ObservableObject
     [ObservableProperty] private bool silencieux;
     [ObservableProperty] private bool aUnePosition;
     [ObservableProperty] private bool dansZoneInterdite;
+    [ObservableProperty] private bool horsPerimetre;
 
     public string Id { get; }
     public string Code { get; }

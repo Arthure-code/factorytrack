@@ -8,4 +8,5 @@ public sealed record ZoneDto(
     double YMin,
     double XMax,
     double YMax,
-    bool Interdite);
+    bool Interdite,
+    bool Perimetre);

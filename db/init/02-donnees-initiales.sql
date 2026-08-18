@@ -39,9 +39,12 @@ SELECT
 FROM generate_series(1, 20) AS i
 ON CONFLICT ("Code") DO NOTHING;
 
-INSERT INTO zones ("Id", "Nom", "Etage", "XMin", "YMin", "XMax", "YMax", "Interdite")
+INSERT INTO zones ("Id", "Nom", "Etage", "XMin", "YMin", "XMax", "YMax", "Interdite", "Perimetre")
 VALUES
-    ('44444444-4444-4444-4444-444444444401', 'Quai de chargement', 0,  0,  0, 15, 12, false),
-    ('44444444-4444-4444-4444-444444444402', 'Zone de production', 0, 15,  5, 50, 35, false),
-    ('44444444-4444-4444-4444-444444444403', 'Local electrique',   0, 52, 32, 60, 40, true)
+    ('44444444-4444-4444-4444-444444444401', 'Quai de chargement',  0,  0,  0, 15, 12, false, false),
+    ('44444444-4444-4444-4444-444444444402', 'Zone de production',  0, 15,  5, 50, 35, false, false),
+    ('44444444-4444-4444-4444-444444444403', 'Local electrique',    0, 52, 32, 60, 40, true,  false),
+    -- Perimetre de securite : marge de 3 m depuis chaque passerelle.
+    -- Un equipement qui SORT de ce rectangle declenche une alerte.
+    ('44444444-4444-4444-4444-444444444404', 'Perimetre de securite', 0,  3,  3, 57, 37, false, true)
 ON CONFLICT DO NOTHING;

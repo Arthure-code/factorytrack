@@ -22,7 +22,7 @@
   <g transform="translate(40,68)">
     <circle cx="0" cy="0" r="5" fill="#27AE60"/>
     <text x="12" y="5" font-size="13" fill="#303A4A">En direct</text>
-    <text x="72" y="5" font-size="13" fill="#6B7684">· 4 machines · 8 equipements mobiles</text>
+    <text x="72" y="5" font-size="13" fill="#6B7684">· 4 machines · 9 equipements mobiles</text>
   </g>
 
   <!-- Cadre du plan (720x480 = 60m x 40m a 12 px/m), decale a y=90 -->
@@ -143,6 +143,8 @@
     <path id="t6"  d="M540,300 L590,280 L620,340 L560,350 Z"/>
     <path id="t7"  d="M380,470 L450,450 L470,510 L410,520 Z"/>
     <path id="t8"  d="M560,220 L640,180 L710,140 L700,120 L640,140 L580,180 Z"/>
+    <!-- t9 : trajectoire qui SORT du perimetre de securite (x<76) -->
+    <path id="t9"  d="M150,540 L100,545 L60,555 L52,552 L100,540 L150,530 Z"/>
   </defs>
 
   <style>
@@ -235,6 +237,23 @@
                keyTimes="0;0.26;0.3;0.43;0.46;1"/>
       EQ-08
       <animateMotion dur="15s" begin="4s" repeatCount="indefinite" rotate="0"><mpath href="#t8"/></animateMotion>
+    </text>
+  </g>
+
+  <!-- EQ-09 : sort du perimetre de securite entre 5s et 8.5s / 15s -->
+  <g>
+    <circle r="5" stroke="#FFFFFF" stroke-width="1.5">
+      <animate attributeName="fill" dur="15s" repeatCount="indefinite"
+               values="#2177BB;#2177BB;#F39C12;#F39C12;#2177BB;#2177BB"
+               keyTimes="0;0.33;0.37;0.55;0.6;1"/>
+      <animateMotion dur="15s" repeatCount="indefinite" rotate="0"><mpath href="#t9"/></animateMotion>
+    </circle>
+    <text dx="7" dy="-6" font-size="11" font-weight="700">
+      <animate attributeName="fill" dur="15s" repeatCount="indefinite"
+               values="#1A5D92;#1A5D92;#B9770E;#B9770E;#1A5D92;#1A5D92"
+               keyTimes="0;0.33;0.37;0.55;0.6;1"/>
+      EQ-09
+      <animateMotion dur="15s" repeatCount="indefinite" rotate="0"><mpath href="#t9"/></animateMotion>
     </text>
   </g>
 

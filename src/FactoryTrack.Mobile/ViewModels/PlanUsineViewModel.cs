@@ -152,9 +152,10 @@ public partial class PlanUsineViewModel : ObservableObject, IAsyncDisposable
 
     private void TraiterAlerteEntree(AlerteZoneDto alerte)
     {
-        // On ne notifie que pour les zones interdites : entrer dans "Zone de production"
-        // est un evenement metier normal, pas une alerte.
-        if (!alerte.ZoneInterdite)
+        // Deux cas d'alerte a notifier : entree en zone interdite, ou sortie
+        // du perimetre de securite. Les zones neutres (production, quai) sont
+        // ignorees ici : entrer dedans est un evenement metier normal.
+        if (!alerte.ZoneInterdite && !alerte.ZonePerimetre)
             return;
 
         SurUi(() =>
@@ -163,7 +164,8 @@ public partial class PlanUsineViewModel : ObservableObject, IAsyncDisposable
             if (_parBalise.TryGetValue(alerte.BaliseIdentifiant, out var apercu))
             {
                 code = apercu.Code;
-                apercu.DansZoneInterdite = true;
+                if (alerte.ZoneInterdite) apercu.DansZoneInterdite = true;
+                if (alerte.ZonePerimetre) apercu.HorsPerimetre = true;
             }
 
             Alertes.Insert(0, new AlerteApercu(alerte, code));
@@ -187,13 +189,16 @@ public partial class PlanUsineViewModel : ObservableObject, IAsyncDisposable
 
     private void TraiterAlerteSortie(AlerteZoneDto alerte)
     {
-        if (!alerte.ZoneInterdite)
+        if (!alerte.ZoneInterdite && !alerte.ZonePerimetre)
             return;
 
         SurUi(() =>
         {
             if (_parBalise.TryGetValue(alerte.BaliseIdentifiant, out var apercu))
-                apercu.DansZoneInterdite = false;
+            {
+                if (alerte.ZoneInterdite) apercu.DansZoneInterdite = false;
+                if (alerte.ZonePerimetre) apercu.HorsPerimetre = false;
+            }
         });
     }
 

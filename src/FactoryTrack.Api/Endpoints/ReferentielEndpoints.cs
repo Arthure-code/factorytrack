@@ -21,7 +21,7 @@ public static class ReferentielEndpoints
         {
             var zones = await depot.ObtenirZonesAsync(jeton);
             return Results.Ok(zones.Select(z =>
-                new ZoneDto(z.Id, z.Nom, z.Etage, z.XMin, z.YMin, z.XMax, z.YMax, z.Interdite)));
+                new ZoneDto(z.Id, z.Nom, z.Etage, z.XMin, z.YMin, z.XMax, z.YMax, z.Interdite, z.Perimetre)));
         })
         .WithName("ObtenirZones");
 

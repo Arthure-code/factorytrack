@@ -348,7 +348,7 @@ public class VuePlanUsine : SKCanvasView
             var pt = versEcran(eq.X, eq.Y);
             _dernieresPositionsEcran.Add((eq, pt));
 
-            // Priorite : alerte zone interdite > silencieux > actif.
+            // Priorite : zone interdite (rouge) > hors perimetre (orange) > silencieux (gris) > actif (bleu).
             SKColor couleurBord;
             SKColor couleurTexte;
 
@@ -356,6 +356,11 @@ public class VuePlanUsine : SKCanvasView
             {
                 couleurBord = new SKColor(0xC0, 0x39, 0x2B);
                 couleurTexte = new SKColor(0x94, 0x31, 0x26);
+            }
+            else if (eq.HorsPerimetre)
+            {
+                couleurBord = new SKColor(0xF3, 0x9C, 0x12);
+                couleurTexte = new SKColor(0xB9, 0x77, 0x0E);
             }
             else if (eq.Silencieux)
             {

@@ -41,8 +41,13 @@ CREATE TABLE IF NOT EXISTS zones (
     "YMin"      double precision NOT NULL,
     "XMax"      double precision NOT NULL,
     "YMax"      double precision NOT NULL,
-    "Interdite" boolean NOT NULL DEFAULT false
+    "Interdite" boolean NOT NULL DEFAULT false,
+    "Perimetre" boolean NOT NULL DEFAULT false
 );
+
+-- Sans migrations EF, on ajoute la colonne a la volee si la table existe deja
+-- (bases anciennes qui n'ont pas ete recreees).
+ALTER TABLE zones ADD COLUMN IF NOT EXISTS "Perimetre" boolean NOT NULL DEFAULT false;
 
 -- Serie temporelle. La cle primaire inclut l'horodatage : Timescale exige que la
 -- colonne de partitionnement fasse partie de toute contrainte unique.
