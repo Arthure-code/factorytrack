@@ -21,7 +21,9 @@ builder.Services.AddSingleton<ServicePositionnement>(fournisseur =>
 
 builder.Services.AddSingleton<IGardeIdempotence, GardeIdempotence>();
 builder.Services.AddSingleton<GardeHorsOrdre>();
-builder.Services.AddScoped<IPublicateurPositions, PublicateurSignalR>();
+// Singleton : la HubConnection sous-jacente doit etre partagee, sinon chaque
+// appel gRPC refait un handshake (voir bug releve dans l'analyse du back-end).
+builder.Services.AddSingleton<IPublicateurPositions, PublicateurSignalR>();
 
 builder.Services.AddGrpc();
 

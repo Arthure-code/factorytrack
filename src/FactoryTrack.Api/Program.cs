@@ -18,6 +18,7 @@ builder.Services.AjouterInfrastructure(builder.Configuration);
 
 builder.Services.AddSignalR();
 builder.Services.AddHostedService<ServiceSurveillanceSilence>();
+builder.Services.AddHostedService<ServiceSurveillanceZones>();
 
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();

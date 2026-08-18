@@ -29,16 +29,19 @@ public class DepotPositions : IDepotPositions
     /// Derniere position connue par balise. DISTINCT ON est propre a PostgreSQL et
     /// bien plus rapide ici qu'un GROUP BY suivi d'une jointure.
     /// </summary>
-    public async Task<IReadOnlyList<Position>> ObtenirDernieresAsync(int etage, CancellationToken jeton = default)
+    public async Task<IReadOnlyList<Position>> ObtenirDernieresAsync(int? etage, CancellationToken jeton = default)
     {
+        // Le filtre par etage est optionnel : null equivaut a "tous etages confondus".
+        // On passe -1 comme sentinelle inutilisee quand etage est null pour garder une
+        // signature parametree (les parametres nuls sont mal supportes par FromSqlRaw).
         return await _contexte.Positions
             .FromSqlRaw(
                 """
                 SELECT DISTINCT ON ("BaliseId") *
                 FROM positions
-                WHERE "Etage" = {0}
+                WHERE ({0}::integer IS NULL OR "Etage" = {0}::integer)
                 ORDER BY "BaliseId", "Horodatage" DESC
-                """, etage)
+                """, etage.HasValue ? etage.Value : (object)DBNull.Value)
             .AsNoTracking()
             .ToListAsync(jeton);
     }

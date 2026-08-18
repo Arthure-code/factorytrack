@@ -9,12 +9,17 @@ namespace FactoryTrack.Ingestion.Services;
 /// <summary>
 /// V1 : l'ingestion se connecte au hub de l'API comme un client et lui transmet
 /// les positions a diffuser. Voir ADR 0002 pour le remplacement par un courtier.
+///
+/// Enregistre en Singleton : la HubConnection sous-jacente est thread-safe pour les
+/// invocations, mais le demarrage doit etre serialise pour eviter les StartAsync
+/// concurrents lorsque plusieurs flux gRPC publient en meme temps.
 /// </summary>
 public class PublicateurSignalR : IPublicateurPositions, IAsyncDisposable
 {
     private const string METHODE_DIFFUSION = "DiffuserPosition";
 
     private readonly HubConnection _connexion;
+    private readonly SemaphoreSlim _verrouDemarrage = new(1, 1);
     private readonly ILogger<PublicateurSignalR> _journal;
 
     public PublicateurSignalR(IConfiguration configuration, ILogger<PublicateurSignalR> journal)
@@ -60,10 +65,16 @@ public class PublicateurSignalR : IPublicateurPositions, IAsyncDisposable
         await _connexion.InvokeAsync(METHODE_DIFFUSION, dto, jeton);
     }
 
-    public async Task DemarrerAsync(CancellationToken jeton = default)
+    private async Task DemarrerAsync(CancellationToken jeton)
     {
+        await _verrouDemarrage.WaitAsync(jeton);
+
         try
         {
+            // Un autre appelant peut avoir demarre la connexion entre le check et la prise du verrou.
+            if (_connexion.State != HubConnectionState.Disconnected)
+                return;
+
             await _connexion.StartAsync(jeton);
         }
         catch (Exception ex)
@@ -71,7 +82,16 @@ public class PublicateurSignalR : IPublicateurPositions, IAsyncDisposable
             // La diffusion est secondaire : l'ingestion et le stockage doivent continuer.
             _journal.LogError(ex, "Connexion au hub impossible.");
         }
+        finally
+        {
+            _verrouDemarrage.Release();
+        }
     }
 
-    public async ValueTask DisposeAsync() => await _connexion.DisposeAsync();
+    public async ValueTask DisposeAsync()
+    {
+        await _connexion.DisposeAsync();
+        _verrouDemarrage.Dispose();
+        GC.SuppressFinalize(this);
+    }
 }

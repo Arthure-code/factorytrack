@@ -5,6 +5,7 @@ public sealed record EquipementDto(
     string Code,
     string Nom,
     string? Categorie,
+    Guid? BaliseId,
     string? BaliseIdentifiant,
     string Etat,
     PositionDto? DernierePosition,

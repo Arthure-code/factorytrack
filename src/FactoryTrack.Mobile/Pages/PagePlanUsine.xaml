@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:FactoryTrack.Mobile.Controls"
+             xmlns:vm="clr-namespace:FactoryTrack.Mobile.ViewModels"
+             x:Class="FactoryTrack.Mobile.Pages.PagePlanUsine"
+             x:DataType="vm:PlanUsineViewModel"
+             Title="Plan de l'usine">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="12" RowSpacing="8">
+
+        <!-- Barre superieure : etat de connexion + rafraichir -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+            <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                <Ellipse WidthRequest="10" HeightRequest="10"
+                         Fill="{Binding Connecte, Converter={StaticResource ConvertisseurEtatConnexion}}"
+                         VerticalOptions="Center"/>
+                <Label Text="{Binding Connecte, Converter={StaticResource ConvertisseurLibelleConnexion}}"
+                       VerticalOptions="Center"
+                       FontSize="13"
+                       TextColor="{AppThemeBinding Light=#303A4A, Dark=#E0E4EA}"/>
+                <Label Text="{Binding Equipements.Count, StringFormat=' · {0} equipements'}"
+                       VerticalOptions="Center"
+                       FontSize="13"
+                       TextColor="{AppThemeBinding Light=#6B7684, Dark=#A0A8B4}"/>
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout Grid.Column="1" Spacing="12" VerticalOptions="Center">
+                <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                    <Switch IsToggled="{Binding AfficherPrecision, Mode=TwoWay}"
+                            VerticalOptions="Center"/>
+                    <Label Text="Precision"
+                           VerticalOptions="Center"
+                           FontSize="13"
+                           TextColor="{AppThemeBinding Light=#303A4A, Dark=#E0E4EA}"/>
+                </HorizontalStackLayout>
+
+                <Button Text="Rafraichir"
+                        Command="{Binding RafraichirCommand}"
+                        IsEnabled="{Binding Chargement, Converter={StaticResource ConvertisseurInverseBool}}"/>
+            </HorizontalStackLayout>
+        </Grid>
+
+        <!-- Bandeau d'alertes de zones interdites -->
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Alertes}"
+                        IsVisible="{Binding Alertes.Count, Converter={StaticResource ConvertisseurCompteVersVisible}}"
+                        Margin="0,4,0,0">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="4"/>
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="vm:AlerteApercu">
+                    <Border Background="#FDECEA"
+                            Stroke="#E74C3C"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 4"
+                            Padding="10,6">
+                        <HorizontalStackLayout Spacing="8">
+                            <Label Text="⚠"
+                                   TextColor="#C0392B"
+                                   FontSize="14"
+                                   VerticalOptions="Center"/>
+                            <Label VerticalOptions="Center" FontSize="13" TextColor="#943126">
+                                <Label.FormattedText>
+                                    <FormattedString>
+                                        <Span Text="{Binding CodeEquipement}" FontAttributes="Bold"/>
+                                        <Span Text=" est dans "/>
+                                        <Span Text="{Binding ZoneNom}" FontAttributes="Bold"/>
+                                        <Span Text=" · "/>
+                                        <Span Text="{Binding HeureFormattee}" FontSize="11"/>
+                                    </FormattedString>
+                                </Label.FormattedText>
+                            </Label>
+                        </HorizontalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Plan -->
+        <Border Grid.Row="2"
+                Stroke="{AppThemeBinding Light=#D0D5DC, Dark=#404A5C}"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 6">
+            <Grid>
+                <controls:VuePlanUsine
+                    LargeurUsine="{Binding LargeurUsine}"
+                    HauteurUsine="{Binding HauteurUsine}"
+                    Passerelles="{Binding Passerelles}"
+                    Zones="{Binding Zones}"
+                    Equipements="{Binding Equipements}"
+                    AfficherPrecision="{Binding AfficherPrecision}"
+                    EquipementTapeCommand="{Binding OuvrirDetailCommand}"/>
+
+                <ActivityIndicator IsRunning="{Binding Chargement}"
+                                   IsVisible="{Binding Chargement}"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Center"/>
+            </Grid>
+        </Border>
+
+        <!-- Message d'erreur -->
+        <Border Grid.Row="3"
+                IsVisible="{Binding MessageErreur, Converter={StaticResource ConvertisseurTexteVersVisible}}"
+                Background="#FDECEA"
+                Stroke="#E74C3C"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 4"
+                Padding="12,8">
+            <Label Text="{Binding MessageErreur}"
+                   TextColor="#943126"
+                   FontSize="13"/>
+        </Border>
+
+    </Grid>
+</ContentPage>

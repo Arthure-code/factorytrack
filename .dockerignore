@@ -1,0 +1,37 @@
+# Les artefacts de compilation locaux ne doivent JAMAIS entrer dans l'image.
+# project.assets.json contient des chemins absolus de la machine hote
+# (C:\Users\...\.nuget\packages) qui n'existent pas dans le conteneur Linux :
+# combine a --no-restore, cela fait echouer ResolvePackageAssets (MSB4018).
+**/bin/
+**/obj/
+
+# Environnements de developpement
+**/.vs/
+**/.vscode/
+**/.idea/
+**/*.user
+**/*.suo
+
+# Docker et Git
+**/.git/
+**/.gitignore
+**/.dockerignore
+**/Dockerfile*
+**/docker-compose*.yml
+
+# Tests et couverture
+**/TestResults/
+**/coverage*.xml
+**/coverage*.json
+
+# Documentation et CI : inutiles a la construction des images
+docs/
+README.md
+.github/
+.gitlab-ci.yml
+
+# Secrets
+**/appsettings.Development.local.json
+**/appsettings.Production.json
+**/.env
+**/*.pfx

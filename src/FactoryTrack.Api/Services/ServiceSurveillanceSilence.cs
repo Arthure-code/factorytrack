@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using FactoryTrack.Api.Hubs;
 using FactoryTrack.Contracts;
 using FactoryTrack.Domain.Interfaces;
@@ -10,6 +11,9 @@ namespace FactoryTrack.Api.Services;
 /// <summary>
 /// Detecte les equipements dont plus aucune mesure n'arrive et previent les clients.
 /// Afficher une position perimee comme actuelle serait un mensonge fonctionnel.
+///
+/// La notification n'est emise qu'a la transition (actif -> silencieux et retour) :
+/// spammer les clients a chaque cycle inonderait l'UI pour une information stable.
 /// </summary>
 public class ServiceSurveillanceSilence : BackgroundService
 {
@@ -19,6 +23,9 @@ public class ServiceSurveillanceSilence : BackgroundService
     private readonly IHubContext<PositionHub> _hub;
     private readonly OptionsPositionnement _options;
     private readonly ILogger<ServiceSurveillanceSilence> _journal;
+
+    // Etat memorise entre deux cycles : true si la balise etait silencieuse au dernier tour.
+    private readonly ConcurrentDictionary<string, bool> _etatSilencieux = new();
 
     public ServiceSurveillanceSilence(
         IServiceScopeFactory fabriquePortee,
@@ -56,13 +63,25 @@ public class ServiceSurveillanceSilence : BackgroundService
         var depotPositions = portee.ServiceProvider.GetRequiredService<IDepotPositions>();
 
         var limite = DateTimeOffset.UtcNow.AddSeconds(-_options.DelaiSilenceSecondes);
-        var dernieres = await depotPositions.ObtenirDernieresAsync(etage: 0, jeton);
+        var dernieres = await depotPositions.ObtenirDernieresAsync(etage: null, jeton);
 
-        foreach (var position in dernieres.Where(p => p.Horodatage < limite))
+        foreach (var position in dernieres)
         {
+            var estSilencieuse = position.Horodatage < limite;
+            var etaitSilencieuse = _etatSilencieux.GetValueOrDefault(position.BaliseIdentifiant, false);
+
+            if (estSilencieuse == etaitSilencieuse)
+                continue;
+
+            _etatSilencieux[position.BaliseIdentifiant] = estSilencieuse;
+
+            var methode = estSilencieuse
+                ? NomsHub.Methodes.EquipementSilencieux
+                : NomsHub.Methodes.EquipementActif;
+
             await _hub.Clients
                 .Group(NomsHub.Groupes.Etage(position.Etage))
-                .SendAsync(NomsHub.Methodes.EquipementSilencieux, position.BaliseIdentifiant, jeton);
+                .SendAsync(methode, position.BaliseIdentifiant, jeton);
         }
     }
 }

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:FactoryTrack.Mobile.Controls"
+             xmlns:vm="clr-namespace:FactoryTrack.Mobile.ViewModels"
+             x:Class="FactoryTrack.Mobile.Pages.PageDetailEquipement"
+             x:DataType="vm:DetailEquipementViewModel"
+             Title="{Binding Code}">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="12" RowSpacing="10">
+
+        <!-- En-tete -->
+        <VerticalStackLayout Grid.Row="0" Spacing="2">
+            <Label Text="{Binding Nom}"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="{AppThemeBinding Light=#1A5D92, Dark=#4FB3F0}"/>
+            <Label Text="{Binding Categorie, StringFormat='Categorie : {0}'}"
+                   FontSize="13"
+                   TextColor="{AppThemeBinding Light=#6B7684, Dark=#A0A8B4}"/>
+        </VerticalStackLayout>
+
+        <!-- Statistiques -->
+        <Border Grid.Row="1"
+                Stroke="{AppThemeBinding Light=#D0D5DC, Dark=#404A5C}"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 6"
+                Padding="12,10">
+            <Grid ColumnDefinitions="*,*,*" RowDefinitions="Auto,Auto" ColumnSpacing="20">
+
+                <VerticalStackLayout Grid.Column="0" Grid.Row="0">
+                    <Label Text="Points sur 30 min" FontSize="11" TextColor="#6B7684"/>
+                    <Label Text="{Binding NombrePositions}"
+                           FontSize="20" FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#1A5D92, Dark=#4FB3F0}"/>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Grid.Column="1" Grid.Row="0">
+                    <Label Text="Distance parcourue" FontSize="11" TextColor="#6B7684"/>
+                    <Label Text="{Binding DistanceParcourueMetres, StringFormat='{0} m'}"
+                           FontSize="20" FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#1A5D92, Dark=#4FB3F0}"/>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Grid.Column="2" Grid.Row="0">
+                    <Label Text="Precision moyenne" FontSize="11" TextColor="#6B7684"/>
+                    <Label Text="{Binding PrecisionMoyenne, StringFormat='{0} m'}"
+                           FontSize="20" FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light=#1A5D92, Dark=#4FB3F0}"/>
+                </VerticalStackLayout>
+
+            </Grid>
+        </Border>
+
+        <!-- Trace -->
+        <Border Grid.Row="2"
+                Stroke="{AppThemeBinding Light=#D0D5DC, Dark=#404A5C}"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 6">
+            <Grid>
+                <controls:VueTraceEquipement
+                    LargeurUsine="{Binding LargeurUsine}"
+                    HauteurUsine="{Binding HauteurUsine}"
+                    Passerelles="{Binding Passerelles}"
+                    Positions="{Binding Positions}"/>
+
+                <ActivityIndicator IsRunning="{Binding Chargement}"
+                                   IsVisible="{Binding Chargement}"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Center"/>
+
+                <Label Text="Aucune position sur les 30 dernieres minutes."
+                       VerticalOptions="Center"
+                       HorizontalOptions="Center"
+                       TextColor="#6B7684"
+                       FontSize="14">
+                    <Label.Triggers>
+                        <MultiTrigger TargetType="Label">
+                            <MultiTrigger.Conditions>
+                                <BindingCondition Binding="{Binding Chargement}" Value="False"/>
+                                <BindingCondition Binding="{Binding NombrePositions}" Value="0"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="IsVisible" Value="True"/>
+                        </MultiTrigger>
+                    </Label.Triggers>
+                    <Label.IsVisible>False</Label.IsVisible>
+                </Label>
+            </Grid>
+        </Border>
+
+        <!-- Erreur -->
+        <Border Grid.Row="3"
+                IsVisible="{Binding MessageErreur, Converter={StaticResource ConvertisseurTexteVersVisible}}"
+                Background="#FDECEA"
+                Stroke="#E74C3C"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 4"
+                Padding="12,8">
+            <Label Text="{Binding MessageErreur}"
+                   TextColor="#943126"
+                   FontSize="13"/>
+        </Border>
+
+    </Grid>
+</ContentPage>

@@ -25,7 +25,7 @@ public static class EquipementsEndpoints
         CancellationToken jeton)
     {
         var equipements = await depotReferentiel.ObtenirEquipementsAsync(jeton);
-        var dernieres = await depotPositions.ObtenirDernieresAsync(etage: 0, jeton);
+        var dernieres = await depotPositions.ObtenirDernieresAsync(etage: null, jeton);
 
         var parBalise = dernieres.ToDictionary(p => p.BaliseIdentifiant);
         var limite = DateTimeOffset.UtcNow.AddSeconds(-options.Value.DelaiSilenceSecondes);
@@ -48,7 +48,7 @@ public static class EquipementsEndpoints
 
             return new EquipementDto(
                 equipement.Id, equipement.Code, equipement.Nom, equipement.Categorie,
-                identifiant, equipement.Etat.ToString(), position, silencieux);
+                equipement.BaliseId, identifiant, equipement.Etat.ToString(), position, silencieux);
         });
 
         return Results.Ok(resultat);
