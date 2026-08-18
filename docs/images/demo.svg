@@ -170,8 +170,11 @@
     <path id="t6"  d="M540,300 L590,280 L620,340 L560,350 Z"/>
     <path id="t7"  d="M380,470 L450,450 L470,510 L410,520 Z"/>
     <path id="t8"  d="M560,220 L640,180 L710,140 L700,120 L640,140 L580,180 Z"/>
-    <!-- t9 : trajectoire qui SORT du perimetre de securite (x<76) -->
-    <path id="t9"  d="M150,540 L100,545 L60,555 L52,552 L100,540 L150,530 Z"/>
+    <!-- t9 : trajectoire qui SORT du perimetre de securite en bas-gauche.
+         Le perimetre pointille va de (76,126) a (724,534) : sortir signifie
+         franchir y=534 vers le bas, ou x=76 vers la gauche. La trajectoire
+         va franchement au-dela pour rendre la sortie visible. -->
+    <path id="t9"  d="M200,500 L140,540 L60,555 L55,560 L55,555 L100,540 L200,500 Z"/>
   </defs>
 
   <style>
@@ -267,18 +270,23 @@
     </text>
   </g>
 
-  <!-- EQ-09 : sort du perimetre de securite entre 5s et 8.5s / 15s -->
+  <!-- EQ-09 : trajectoire 6 segments (chacun ~2.5s sur cycle 15s).
+       Phases visuelles :
+         0 - 5s   : dans le perimetre (bleu)
+         5 - 12s  : hors du perimetre (orange, ~7s)
+         12 - 15s : rentre puis stationne (bleu)
+       Les keyTimes du fill collent a ces bornes. -->
   <g>
     <circle r="5" stroke="#FFFFFF" stroke-width="1.5">
       <animate attributeName="fill" dur="15s" repeatCount="indefinite"
                values="#2177BB;#2177BB;#F39C12;#F39C12;#2177BB;#2177BB"
-               keyTimes="0;0.33;0.37;0.55;0.6;1"/>
+               keyTimes="0;0.33;0.35;0.78;0.8;1"/>
       <animateMotion dur="15s" repeatCount="indefinite" rotate="0"><mpath href="#t9"/></animateMotion>
     </circle>
     <text dx="7" dy="-6" font-size="11" font-weight="700">
       <animate attributeName="fill" dur="15s" repeatCount="indefinite"
                values="#1A5D92;#1A5D92;#B9770E;#B9770E;#1A5D92;#1A5D92"
-               keyTimes="0;0.33;0.37;0.55;0.6;1"/>
+               keyTimes="0;0.33;0.35;0.78;0.8;1"/>
       EQ-09
       <animateMotion dur="15s" repeatCount="indefinite" rotate="0"><mpath href="#t9"/></animateMotion>
     </text>
