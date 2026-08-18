@@ -8,8 +8,9 @@ public partial class AppShell : Shell
 	{
 		InitializeComponent();
 
-		// Route non declaree dans le XAML : navigation programmatique
-		// depuis le plan vers la page detail.
+		// Routes non declarees dans le XAML : navigation programmatique
+		// depuis le plan vers les pages secondaires.
 		Routing.RegisterRoute("detail", typeof(PageDetailEquipement));
+		Routing.RegisterRoute("historique", typeof(PageHistoriqueAlertes));
 	}
 }

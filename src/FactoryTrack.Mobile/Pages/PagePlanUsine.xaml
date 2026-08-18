@@ -254,6 +254,15 @@
                         </Label.Text>
                     </Label>
                 </Grid>
+                <BoxView HeightRequest="1" Color="{AppThemeBinding Light=#EAECEF, Dark=#3A4452}"/>
+                <Grid Padding="12,10">
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OuvrirHistoriqueCommand}"/>
+                    </Grid.GestureRecognizers>
+                    <Label Text="📋  Historique des alertes"
+                           FontSize="14"
+                           TextColor="{AppThemeBinding Light=#303A4A, Dark=#E0E4EA}"/>
+                </Grid>
             </VerticalStackLayout>
         </Border>
 

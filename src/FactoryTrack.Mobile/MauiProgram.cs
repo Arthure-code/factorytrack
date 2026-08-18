@@ -31,6 +31,10 @@ public static class MauiProgram
 			new ClientReferentiel(
 				sp.GetRequiredService<IHttpClientFactory>().CreateClient(),
 				sp.GetRequiredService<OptionsApi>()));
+		builder.Services.AddScoped<IClientAlertes>(sp =>
+			new ClientAlertes(
+				sp.GetRequiredService<IHttpClientFactory>().CreateClient(),
+				sp.GetRequiredService<OptionsApi>()));
 
 		// SignalR : instance unique de bout en bout, sinon on paye un handshake par page.
 		builder.Services.AddSingleton<IServiceTempsReel, ServiceTempsReel>();
@@ -39,6 +43,8 @@ public static class MauiProgram
 		builder.Services.AddTransient<PagePlanUsine>();
 		builder.Services.AddTransient<DetailEquipementViewModel>();
 		builder.Services.AddTransient<PageDetailEquipement>();
+		builder.Services.AddTransient<HistoriqueAlertesViewModel>();
+		builder.Services.AddTransient<PageHistoriqueAlertes>();
 
 #if DEBUG
 		builder.Logging.AddDebug();

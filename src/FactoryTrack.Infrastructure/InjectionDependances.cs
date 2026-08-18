@@ -20,6 +20,7 @@ public static class InjectionDependances
 
         services.AddScoped<IDepotPositions, DepotPositions>();
         services.AddScoped<IDepotReferentiel, DepotReferentiel>();
+        services.AddScoped<IDepotAlertes, DepotAlertes>();
         services.AddSingleton<CacheReferentiel>();
 
         return services;

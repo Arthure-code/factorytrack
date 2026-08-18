@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:FactoryTrack.Mobile.ViewModels"
+             x:Class="FactoryTrack.Mobile.Pages.PageHistoriqueAlertes"
+             x:DataType="vm:HistoriqueAlertesViewModel"
+             Title="Historique des alertes">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="12" RowSpacing="8">
+
+        <!-- Barre d'actions groupees -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                <Label Text="{Binding Alertes.Count, StringFormat='{0} entree(s)'}"
+                       FontSize="13" FontAttributes="Bold"
+                       VerticalOptions="Center"
+                       TextColor="{AppThemeBinding Light=#1E3A5F, Dark=#4FB3F0}"/>
+                <Label Text="{Binding NombreSelectionnees, StringFormat=' · {0} selectionnee(s)'}"
+                       FontSize="12"
+                       VerticalOptions="Center"
+                       TextColor="{AppThemeBinding Light=#6B7684, Dark=#A0A8B4}"
+                       IsVisible="{Binding NombreSelectionnees, Converter={StaticResource ConvertisseurCompteVersVisible}}"/>
+            </HorizontalStackLayout>
+
+            <Button Grid.Column="1"
+                    Text="↻"
+                    FontSize="16"
+                    WidthRequest="36" HeightRequest="36"
+                    Padding="0"
+                    BackgroundColor="Transparent"
+                    TextColor="{AppThemeBinding Light=#303A4A, Dark=#E0E4EA}"
+                    Command="{Binding ChargerCommand}"/>
+        </Grid>
+
+        <!-- Boutons d'actions par lot -->
+        <ScrollView Grid.Row="1" Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+            <HorizontalStackLayout Spacing="6">
+                <Button Text="Tout selectionner" FontSize="11" Padding="10,6"
+                        BackgroundColor="{AppThemeBinding Light=#EAECEF, Dark=#3A4452}"
+                        TextColor="{AppThemeBinding Light=#303A4A, Dark=#E0E4EA}"
+                        Command="{Binding ToutSelectionnerCommand}"/>
+                <Button Text="Rien" FontSize="11" Padding="10,6"
+                        BackgroundColor="{AppThemeBinding Light=#EAECEF, Dark=#3A4452}"
+                        TextColor="{AppThemeBinding Light=#303A4A, Dark=#E0E4EA}"
+                        Command="{Binding ToutDeselectionnerCommand}"/>
+                <Button Text="Supprimer selection" FontSize="11" Padding="10,6"
+                        BackgroundColor="#C0392B" TextColor="White"
+                        Command="{Binding SupprimerSelectionCommand}"
+                        IsEnabled="{Binding NombreSelectionnees, Converter={StaticResource ConvertisseurCompteVersVisible}}"/>
+                <BoxView WidthRequest="1" Color="{AppThemeBinding Light=#D0D5DC, Dark=#404A5C}"/>
+                <Button Text="Purger &gt; 1 h" FontSize="11" Padding="10,6"
+                        BackgroundColor="Transparent"
+                        TextColor="#C0392B" BorderColor="#C0392B" BorderWidth="1"
+                        Command="{Binding SupprimerAvantUneHeureCommand}"/>
+                <Button Text="Purger avant aujourd'hui" FontSize="11" Padding="10,6"
+                        BackgroundColor="Transparent"
+                        TextColor="#C0392B" BorderColor="#C0392B" BorderWidth="1"
+                        Command="{Binding SupprimerAvantAujourdhuiCommand}"/>
+            </HorizontalStackLayout>
+        </ScrollView>
+
+        <!-- Liste des alertes -->
+        <Border Grid.Row="2"
+                Stroke="{AppThemeBinding Light=#D0D5DC, Dark=#404A5C}"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 6">
+            <Grid>
+                <CollectionView ItemsSource="{Binding Alertes}">
+                    <CollectionView.EmptyView>
+                        <Label Text="Aucune alerte dans l'historique."
+                               HorizontalOptions="Center" VerticalOptions="Center"
+                               TextColor="#6B7684" FontSize="14" Padding="20"/>
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="0"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="vm:AlerteHistoriqueApercu">
+                            <Grid Padding="12,10" ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="10">
+                                <CheckBox IsChecked="{Binding Selectionnee, Mode=TwoWay}"
+                                          VerticalOptions="Center"
+                                          Color="{AppThemeBinding Light=#2177BB, Dark=#4FB3F0}"/>
+                                <Label Grid.Column="1"
+                                       Text="⚠"
+                                       FontSize="14"
+                                       VerticalOptions="Center"
+                                       TextColor="{Binding EstAlerteRouge, Converter={StaticResource ConvertisseurAlerteCouleur}}"/>
+                                <VerticalStackLayout Grid.Column="2" Spacing="1" VerticalOptions="Center">
+                                    <Label FontSize="13">
+                                        <Label.FormattedText>
+                                            <FormattedString>
+                                                <Span Text="{Binding CodeEquipement}"
+                                                      FontAttributes="Bold"
+                                                      TextColor="{AppThemeBinding Light=#1E3A5F, Dark=#4FB3F0}"/>
+                                                <Span Text="  ·  "
+                                                      TextColor="{AppThemeBinding Light=#6B7684, Dark=#A0A8B4}"/>
+                                                <Span Text="{Binding ZoneNom}"
+                                                      TextColor="{AppThemeBinding Light=#303A4A, Dark=#E0E4EA}"/>
+                                            </FormattedString>
+                                        </Label.FormattedText>
+                                    </Label>
+                                    <Label Text="{Binding TypeLibelle}"
+                                           FontSize="11"
+                                           TextColor="{AppThemeBinding Light=#6B7684, Dark=#A0A8B4}"/>
+                                </VerticalStackLayout>
+                                <Label Grid.Column="3"
+                                       Text="{Binding HorodatageFormatte}"
+                                       FontSize="11"
+                                       VerticalOptions="Center"
+                                       TextColor="{AppThemeBinding Light=#6B7684, Dark=#A0A8B4}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <ActivityIndicator IsRunning="{Binding Chargement}" IsVisible="{Binding Chargement}"
+                                   HorizontalOptions="Center" VerticalOptions="Center"/>
+            </Grid>
+        </Border>
+
+        <!-- Messages -->
+        <VerticalStackLayout Grid.Row="3" Spacing="4">
+            <Border IsVisible="{Binding MessageErreur, Converter={StaticResource ConvertisseurTexteVersVisible}}"
+                    Background="#FDECEA" Stroke="#E74C3C" StrokeThickness="1"
+                    StrokeShape="RoundRectangle 4" Padding="12,8">
+                <Label Text="{Binding MessageErreur}" TextColor="#943126" FontSize="12"/>
+            </Border>
+            <Border IsVisible="{Binding MessageInfo, Converter={StaticResource ConvertisseurTexteVersVisible}}"
+                    Background="#EAF7EE" Stroke="#27AE60" StrokeThickness="1"
+                    StrokeShape="RoundRectangle 4" Padding="12,8">
+                <Label Text="{Binding MessageInfo}" TextColor="#1E6B3D" FontSize="12"/>
+            </Border>
+        </VerticalStackLayout>
+    </Grid>
+</ContentPage>

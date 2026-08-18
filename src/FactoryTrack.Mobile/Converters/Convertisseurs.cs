@@ -60,3 +60,15 @@ public class ConvertisseurEtatPrecision : IValueConverter
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
         throw new NotSupportedException();
 }
+
+public class ConvertisseurAlerteCouleur : IValueConverter
+{
+    private static readonly Color Rouge = Color.FromArgb("#C0392B");
+    private static readonly Color Gris = Color.FromArgb("#7F8C8D");
+
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        value is true ? Rouge : Gris;
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+        throw new NotSupportedException();
+}

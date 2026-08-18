@@ -17,6 +17,7 @@
             <conv:ConvertisseurTexteVersVisible x:Key="ConvertisseurTexteVersVisible" />
             <conv:ConvertisseurCompteVersVisible x:Key="ConvertisseurCompteVersVisible" />
             <conv:ConvertisseurEtatPrecision x:Key="ConvertisseurEtatPrecision" />
+            <conv:ConvertisseurAlerteCouleur x:Key="ConvertisseurAlerteCouleur" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -51,6 +51,7 @@ app.UseCors(POLITIQUE_CORS);
 app.MapperEquipements();
 app.MapperPositions();
 app.MapperReferentiel();
+app.MapperAlertes();
 
 app.MapHub<PositionHub>(NomsHub.Chemin);
 app.MapHealthChecks("/health");

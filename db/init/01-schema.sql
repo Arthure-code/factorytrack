@@ -60,6 +60,23 @@ CREATE TABLE IF NOT EXISTS machines_fixes (
     "Hauteur"  double precision NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS alertes_historique (
+    "Id"                uuid PRIMARY KEY,
+    "BaliseIdentifiant" varchar(100) NOT NULL,
+    "CodeEquipement"    varchar(50) NOT NULL,
+    "ZoneId"            uuid NOT NULL,
+    "ZoneNom"           varchar(200) NOT NULL,
+    "ZoneInterdite"     boolean NOT NULL DEFAULT false,
+    "ZonePerimetre"     boolean NOT NULL DEFAULT false,
+    "EstEntree"         boolean NOT NULL,
+    "Etage"             integer NOT NULL DEFAULT 0,
+    "Horodatage"        timestamptz NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS ix_alertes_horodatage ON alertes_historique ("Horodatage" DESC);
+CREATE INDEX IF NOT EXISTS ix_alertes_balise ON alertes_historique ("BaliseIdentifiant", "Horodatage" DESC);
+CREATE INDEX IF NOT EXISTS ix_alertes_zone ON alertes_historique ("ZoneId", "Horodatage" DESC);
+
 -- Serie temporelle. La cle primaire inclut l'horodatage : Timescale exige que la
 -- colonne de partitionnement fasse partie de toute contrainte unique.
 CREATE TABLE IF NOT EXISTS positions (

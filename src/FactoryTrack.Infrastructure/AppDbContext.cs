@@ -13,6 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<Zone> Zones => Set<Zone>();
     public DbSet<Position> Positions => Set<Position>();
     public DbSet<MachineFixe> MachinesFixes => Set<MachineFixe>();
+    public DbSet<AlerteHistorique> Alertes => Set<AlerteHistorique>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -158,6 +158,13 @@ public partial class PlanUsineViewModel : ObservableObject, IAsyncDisposable
     }
 
     [RelayCommand]
+    public async Task OuvrirHistoriqueAsync()
+    {
+        PanneauMenuOuvert = false;
+        await Shell.Current.GoToAsync("historique");
+    }
+
+    [RelayCommand]
     public async Task OuvrirDetailAsync(EquipementApercu? apercu)
     {
         if (apercu is null || apercu.BaliseId is null)
