@@ -48,3 +48,11 @@ VALUES
     -- Un equipement qui SORT de ce rectangle declenche une alerte.
     ('44444444-4444-4444-4444-444444444404', 'Perimetre de securite', 0,  3,  3, 57, 37, false, true)
 ON CONFLICT DO NOTHING;
+
+INSERT INTO machines_fixes ("Id", "Code", "Nom", "Etage", "X", "Y", "Largeur", "Hauteur")
+VALUES
+    ('55555555-5555-5555-5555-555555555501', 'M1', 'Presse',              0, 18, 26, 6, 3.5),
+    ('55555555-5555-5555-5555-555555555502', 'M2', 'Tour CN',             0, 27, 22, 6, 3.5),
+    ('55555555-5555-5555-5555-555555555503', 'M3', 'Robot soudure',       0, 36, 26, 6, 3.5),
+    ('55555555-5555-5555-5555-555555555504', 'M4', 'Ligne d''assemblage', 0, 18, 15, 30, 2.5)
+ON CONFLICT ("Code") DO NOTHING;

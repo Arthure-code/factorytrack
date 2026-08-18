@@ -38,6 +38,10 @@ public class VuePlanUsine : SKCanvasView
         BindableProperty.Create(nameof(Equipements), typeof(IEnumerable), typeof(VuePlanUsine), null,
             propertyChanged: (b, o, n) => ((VuePlanUsine)b).ObserverEquipements(o, n));
 
+    public static readonly BindableProperty MachinesProperty =
+        BindableProperty.Create(nameof(Machines), typeof(IEnumerable), typeof(VuePlanUsine), null,
+            propertyChanged: (b, o, n) => ((VuePlanUsine)b).ObserverCollection(o, n));
+
     public static readonly BindableProperty AfficherPrecisionProperty =
         BindableProperty.Create(nameof(AfficherPrecision), typeof(bool), typeof(VuePlanUsine), false,
             propertyChanged: (b, _, _) => ((VuePlanUsine)b).InvalidateSurface());
@@ -73,6 +77,12 @@ public class VuePlanUsine : SKCanvasView
     {
         get => (IEnumerable?)GetValue(EquipementsProperty);
         set => SetValue(EquipementsProperty, value);
+    }
+
+    public IEnumerable? Machines
+    {
+        get => (IEnumerable?)GetValue(MachinesProperty);
+        set => SetValue(MachinesProperty, value);
     }
 
     public bool AfficherPrecision
@@ -224,8 +234,57 @@ public class VuePlanUsine : SKCanvasView
         DessinerFond(canvas, offsetX, offsetY, largeurTracee, hauteurTracee);
         DessinerGrille(canvas, largeurUsine, hauteurUsine, VersEcran);
         DessinerZones(canvas, echelle, VersEcran);
+        DessinerMachines(canvas, echelle, VersEcran);
         DessinerPasserelles(canvas, VersEcran);
         DessinerEquipements(canvas, echelle, VersEcran);
+    }
+
+    private void DessinerMachines(SKCanvas canvas, float echelle, Func<double, double, SKPoint> versEcran)
+    {
+        if (Machines is null) return;
+
+        var couleurFond = new SKColor(0x5D, 0x6D, 0x7E, 0xD8);
+        var couleurBord = new SKColor(0x34, 0x49, 0x5E);
+
+        using var fond = new SKPaint { Color = couleurFond, Style = SKPaintStyle.Fill };
+        using var bord = new SKPaint
+        {
+            Color = couleurBord,
+            Style = SKPaintStyle.Stroke,
+            StrokeWidth = 1.5f,
+            IsAntialias = true
+        };
+        using var texteBlanc = new SKPaint { Color = SKColors.White, IsAntialias = true };
+        using var texteClair = new SKPaint { Color = new SKColor(0xEC, 0xF0, 0xF1), IsAntialias = true };
+        using var policeCode = new SKFont { Size = 12, Embolden = true };
+        using var policeNom = new SKFont { Size = 10 };
+
+        foreach (var obj in Machines)
+        {
+            if (obj is not MachineFixeDto m) continue;
+
+            var coinHaut = versEcran(m.X, m.Y + m.Hauteur);
+            var coinBas = versEcran(m.X + m.Largeur, m.Y);
+            var rect = new SKRect(coinHaut.X, coinHaut.Y, coinBas.X, coinBas.Y);
+
+            canvas.DrawRect(rect, fond);
+            canvas.DrawRect(rect, bord);
+
+            var cx = (rect.Left + rect.Right) / 2f;
+            var cy = (rect.Top + rect.Bottom) / 2f;
+
+            // Barre horizontale (Ligne d'assemblage) : un seul label sur une ligne.
+            // Sinon : Code au-dessus, Nom en-dessous.
+            if (rect.Height < 40)
+            {
+                canvas.DrawText($"{m.Code}  {m.Nom}", cx, cy + 4, SKTextAlign.Center, policeCode, texteBlanc);
+            }
+            else
+            {
+                canvas.DrawText(m.Code, cx, cy - 2, SKTextAlign.Center, policeCode, texteBlanc);
+                canvas.DrawText(m.Nom, cx, cy + 12, SKTextAlign.Center, policeNom, texteClair);
+            }
+        }
     }
 
     private static void DessinerFond(SKCanvas canvas, float x, float y, float largeur, float hauteur)
@@ -280,6 +339,28 @@ public class VuePlanUsine : SKCanvasView
             var coinBas = versEcran(zone.XMax, zone.YMin);
             var rect = new SKRect(coinHaut.X, coinHaut.Y, coinBas.X, coinBas.Y);
 
+            // Perimetre : contour pointille orange, sans remplissage.
+            // Interdite : rouge translucide + contour rouge.
+            // Neutre    : vert translucide + contour vert.
+            if (zone.Perimetre)
+            {
+                var orange = new SKColor(0xF3, 0x9C, 0x12);
+                using var bord = new SKPaint
+                {
+                    Color = orange,
+                    Style = SKPaintStyle.Stroke,
+                    StrokeWidth = 1.5f,
+                    IsAntialias = true,
+                    PathEffect = SKPathEffect.CreateDash(new float[] { 6, 4 }, 0)
+                };
+                canvas.DrawRect(rect, bord);
+
+                using var texte = new SKPaint { Color = new SKColor(0xB9, 0x77, 0x0E), IsAntialias = true };
+                using var police = new SKFont { Size = 12, Embolden = true };
+                canvas.DrawText(zone.Nom, rect.Left + 6, rect.Top + 16, SKTextAlign.Left, police, texte);
+                continue;
+            }
+
             var couleurFond = zone.Interdite
                 ? new SKColor(0xE7, 0x4C, 0x3C, 0x30)
                 : new SKColor(0x2E, 0xCC, 0x71, 0x25);
@@ -288,8 +369,8 @@ public class VuePlanUsine : SKCanvasView
                 ? new SKColor(0xC0, 0x39, 0x2B)
                 : new SKColor(0x27, 0xAE, 0x60);
 
-            using var fond = new SKPaint { Color = couleurFond, Style = SKPaintStyle.Fill };
-            using var bord = new SKPaint
+            using var fondZone = new SKPaint { Color = couleurFond, Style = SKPaintStyle.Fill };
+            using var bordZone = new SKPaint
             {
                 Color = couleurBord,
                 Style = SKPaintStyle.Stroke,
@@ -297,12 +378,12 @@ public class VuePlanUsine : SKCanvasView
                 IsAntialias = true
             };
 
-            canvas.DrawRect(rect, fond);
-            canvas.DrawRect(rect, bord);
+            canvas.DrawRect(rect, fondZone);
+            canvas.DrawRect(rect, bordZone);
 
-            using var texte = new SKPaint { Color = couleurBord, IsAntialias = true };
-            using var police = new SKFont { Size = 12 };
-            canvas.DrawText(zone.Nom, rect.Left + 4, rect.Top + 14, SKTextAlign.Left, police, texte);
+            using var texteZone = new SKPaint { Color = couleurBord, IsAntialias = true };
+            using var policeZone = new SKFont { Size = 12 };
+            canvas.DrawText(zone.Nom, rect.Left + 4, rect.Top + 14, SKTextAlign.Left, policeZone, texteZone);
         }
     }
 

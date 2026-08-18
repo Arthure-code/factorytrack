@@ -21,4 +21,7 @@ public class DepotReferentiel : IDepotReferentiel
 
     public async Task<IReadOnlyList<Zone>> ObtenirZonesAsync(CancellationToken jeton = default) =>
         await _contexte.Zones.AsNoTracking().ToListAsync(jeton);
+
+    public async Task<IReadOnlyList<MachineFixe>> ObtenirMachinesAsync(CancellationToken jeton = default) =>
+        await _contexte.MachinesFixes.AsNoTracking().ToListAsync(jeton);
 }

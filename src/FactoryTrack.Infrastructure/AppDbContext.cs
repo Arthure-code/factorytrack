@@ -12,6 +12,7 @@ public class AppDbContext : DbContext
     public DbSet<Passerelle> Passerelles => Set<Passerelle>();
     public DbSet<Zone> Zones => Set<Zone>();
     public DbSet<Position> Positions => Set<Position>();
+    public DbSet<MachineFixe> MachinesFixes => Set<MachineFixe>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

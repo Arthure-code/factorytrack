@@ -7,7 +7,7 @@
              x:DataType="vm:PlanUsineViewModel"
              Title="Plan de l'usine">
 
-    <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="12" RowSpacing="8">
+    <Grid RowDefinitions="Auto,Auto,*,Auto,Auto" Padding="12" RowSpacing="8">
 
         <!-- Barre superieure : etat de connexion + rafraichir -->
         <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="8">
@@ -89,6 +89,7 @@
                     HauteurUsine="{Binding HauteurUsine}"
                     Passerelles="{Binding Passerelles}"
                     Zones="{Binding Zones}"
+                    Machines="{Binding Machines}"
                     Equipements="{Binding Equipements}"
                     AfficherPrecision="{Binding AfficherPrecision}"
                     EquipementTapeCommand="{Binding OuvrirDetailCommand}"/>
@@ -100,8 +101,31 @@
             </Grid>
         </Border>
 
+        <!-- Legende visuelle -->
+        <HorizontalStackLayout Grid.Row="3" Spacing="20" Padding="4,4,4,0">
+            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                <Ellipse WidthRequest="10" HeightRequest="10" Fill="#2177BB" Stroke="White" StrokeThickness="1" VerticalOptions="Center"/>
+                <Label Text="Equipement mobile" FontSize="11" TextColor="{AppThemeBinding Light=#4A5461, Dark=#B0B8C4}" VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                <Rectangle WidthRequest="16" HeightRequest="10" Fill="#5D6D7E" Stroke="#34495E" StrokeThickness="1" VerticalOptions="Center"/>
+                <Label Text="Machine fixe" FontSize="11" TextColor="{AppThemeBinding Light=#4A5461, Dark=#B0B8C4}" VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                <Line X1="0" Y1="0" X2="18" Y2="0" Stroke="#F39C12" StrokeThickness="2" StrokeDashArray="3,2" VerticalOptions="Center"/>
+                <Label Text="Perimetre securite" FontSize="11" TextColor="{AppThemeBinding Light=#4A5461, Dark=#B0B8C4}" VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                <Rectangle WidthRequest="16" HeightRequest="12" Fill="#E74C3C" Opacity="0.3" Stroke="#C0392B" StrokeThickness="1" VerticalOptions="Center"/>
+                <Label Text="Zone interdite" FontSize="11" TextColor="{AppThemeBinding Light=#4A5461, Dark=#B0B8C4}" VerticalOptions="Center"/>
+            </HorizontalStackLayout>
+        </HorizontalStackLayout>
+
         <!-- Message d'erreur -->
-        <Border Grid.Row="3"
+        <Border Grid.Row="4"
                 IsVisible="{Binding MessageErreur, Converter={StaticResource ConvertisseurTexteVersVisible}}"
                 Background="#FDECEA"
                 Stroke="#E74C3C"

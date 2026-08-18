@@ -32,6 +32,7 @@ public partial class PlanUsineViewModel : ObservableObject, IAsyncDisposable
     [ObservableProperty] private ObservableCollection<EquipementApercu> equipements = new();
     [ObservableProperty] private ObservableCollection<PasserelleDto> passerelles = new();
     [ObservableProperty] private ObservableCollection<ZoneDto> zones = new();
+    [ObservableProperty] private ObservableCollection<MachineFixeDto> machines = new();
     [ObservableProperty] private int etage;
     [ObservableProperty] private bool chargement;
     [ObservableProperty] private string? messageErreur;
@@ -69,11 +70,13 @@ public partial class PlanUsineViewModel : ObservableObject, IAsyncDisposable
             var equipements = await _referentiel.ObtenirEquipementsAsync();
             var passerelles = await _referentiel.ObtenirPasserellesAsync();
             var zones = await _referentiel.ObtenirZonesAsync();
+            var machines = await _referentiel.ObtenirMachinesAsync();
 
             await SurUiAsync(() =>
             {
                 Passerelles = new ObservableCollection<PasserelleDto>(passerelles);
                 Zones = new ObservableCollection<ZoneDto>(zones);
+                Machines = new ObservableCollection<MachineFixeDto>(machines);
 
                 _parBalise.Clear();
                 var apercus = new List<EquipementApercu>();

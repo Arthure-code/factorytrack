@@ -23,6 +23,9 @@ public class ClientReferentiel : IClientReferentiel
     public async Task<IReadOnlyList<ZoneDto>> ObtenirZonesAsync(CancellationToken jeton = default) =>
         await ObtenirAsync<ZoneDto>("/api/referentiel/zones", jeton);
 
+    public async Task<IReadOnlyList<MachineFixeDto>> ObtenirMachinesAsync(CancellationToken jeton = default) =>
+        await ObtenirAsync<MachineFixeDto>("/api/referentiel/machines", jeton);
+
     public async Task<IReadOnlyList<PositionDto>> ObtenirHistoriqueAsync(
         Guid baliseId, DateTimeOffset debut, DateTimeOffset fin, CancellationToken jeton = default)
     {

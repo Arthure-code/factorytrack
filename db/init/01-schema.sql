@@ -49,6 +49,17 @@ CREATE TABLE IF NOT EXISTS zones (
 -- (bases anciennes qui n'ont pas ete recreees).
 ALTER TABLE zones ADD COLUMN IF NOT EXISTS "Perimetre" boolean NOT NULL DEFAULT false;
 
+CREATE TABLE IF NOT EXISTS machines_fixes (
+    "Id"       uuid PRIMARY KEY,
+    "Code"     varchar(50) NOT NULL UNIQUE,
+    "Nom"      varchar(200) NOT NULL,
+    "Etage"    integer NOT NULL DEFAULT 0,
+    "X"        double precision NOT NULL,
+    "Y"        double precision NOT NULL,
+    "Largeur"  double precision NOT NULL,
+    "Hauteur"  double precision NOT NULL
+);
+
 -- Serie temporelle. La cle primaire inclut l'horodatage : Timescale exige que la
 -- colonne de partitionnement fasse partie de toute contrainte unique.
 CREATE TABLE IF NOT EXISTS positions (

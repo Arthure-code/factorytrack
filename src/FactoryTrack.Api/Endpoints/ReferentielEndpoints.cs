@@ -25,6 +25,14 @@ public static class ReferentielEndpoints
         })
         .WithName("ObtenirZones");
 
+        groupe.MapGet("/machines", async (IDepotReferentiel depot, CancellationToken jeton) =>
+        {
+            var machines = await depot.ObtenirMachinesAsync(jeton);
+            return Results.Ok(machines.Select(m =>
+                new MachineFixeDto(m.Id, m.Code, m.Nom, m.Etage, m.X, m.Y, m.Largeur, m.Hauteur)));
+        })
+        .WithName("ObtenirMachines");
+
         return routes;
     }
 }
