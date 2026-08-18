@@ -7,134 +7,254 @@
              x:DataType="vm:PlanUsineViewModel"
              Title="Plan de l'usine">
 
-    <Grid RowDefinitions="Auto,Auto,*,Auto,Auto" Padding="12" RowSpacing="8">
+    <!-- Grille racine avec overlays superposes pour les panneaux flottants -->
+    <Grid>
+        <!-- Contenu principal -->
+        <Grid RowDefinitions="Auto,*,Auto,Auto" Padding="12" RowSpacing="8">
 
-        <!-- Barre superieure : etat de connexion + rafraichir -->
-        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" ColumnSpacing="8">
-            <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
-                <Ellipse WidthRequest="10" HeightRequest="10"
-                         Fill="{Binding Connecte, Converter={StaticResource ConvertisseurEtatConnexion}}"
-                         VerticalOptions="Center"/>
-                <Label Text="{Binding Connecte, Converter={StaticResource ConvertisseurLibelleConnexion}}"
-                       VerticalOptions="Center"
-                       FontSize="13"
-                       TextColor="{AppThemeBinding Light=#303A4A, Dark=#E0E4EA}"/>
-                <Label Text="{Binding Equipements.Count, StringFormat=' · {0} equipements'}"
-                       VerticalOptions="Center"
-                       FontSize="13"
-                       TextColor="{AppThemeBinding Light=#6B7684, Dark=#A0A8B4}"/>
-            </HorizontalStackLayout>
-
-            <HorizontalStackLayout Grid.Column="1" Spacing="12" VerticalOptions="Center">
-                <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-                    <Switch IsToggled="{Binding AfficherPrecision, Mode=TwoWay}"
-                            VerticalOptions="Center"/>
-                    <Label Text="Precision"
+            <!-- Bandeau superieur : etat + boutons cloche et menu -->
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto">
+                <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
+                    <Ellipse WidthRequest="10" HeightRequest="10"
+                             Fill="{Binding Connecte, Converter={StaticResource ConvertisseurEtatConnexion}}"
+                             VerticalOptions="Center"/>
+                    <Label Text="{Binding Connecte, Converter={StaticResource ConvertisseurLibelleConnexion}}"
                            VerticalOptions="Center"
                            FontSize="13"
                            TextColor="{AppThemeBinding Light=#303A4A, Dark=#E0E4EA}"/>
+                    <Label Text="{Binding Equipements.Count, StringFormat=' · {0} equipements'}"
+                           VerticalOptions="Center"
+                           FontSize="13"
+                           TextColor="{AppThemeBinding Light=#6B7684, Dark=#A0A8B4}"/>
                 </HorizontalStackLayout>
 
-                <Button Text="Rafraichir"
-                        Command="{Binding RafraichirCommand}"
-                        IsEnabled="{Binding Chargement, Converter={StaticResource ConvertisseurInverseBool}}"/>
+                <!-- Bouton cloche avec badge compteur d'alertes -->
+                <Grid Grid.Column="1" WidthRequest="40" HeightRequest="36" VerticalOptions="Center">
+                    <Button Text="🔔"
+                            FontSize="18"
+                            Padding="0"
+                            BackgroundColor="Transparent"
+                            TextColor="{AppThemeBinding Light=#303A4A, Dark=#E0E4EA}"
+                            Command="{Binding BasculerPanneauAlertesCommand}"/>
+                    <Border IsVisible="{Binding Alertes.Count, Converter={StaticResource ConvertisseurCompteVersVisible}}"
+                            Background="#C0392B"
+                            StrokeShape="RoundRectangle 9"
+                            StrokeThickness="0"
+                            Padding="5,1"
+                            MinimumWidthRequest="18"
+                            HeightRequest="18"
+                            HorizontalOptions="End"
+                            VerticalOptions="Start"
+                            Margin="0,2,0,0"
+                            InputTransparent="True">
+                        <Label Text="{Binding Alertes.Count}"
+                               TextColor="White"
+                               FontSize="10"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"/>
+                    </Border>
+                </Grid>
+
+                <!-- Bouton menu 3 points -->
+                <Button Grid.Column="2"
+                        Text="⋮"
+                        FontSize="22"
+                        FontAttributes="Bold"
+                        Padding="0"
+                        WidthRequest="36"
+                        HeightRequest="36"
+                        BackgroundColor="Transparent"
+                        TextColor="{AppThemeBinding Light=#303A4A, Dark=#E0E4EA}"
+                        VerticalOptions="Center"
+                        Command="{Binding BasculerMenuCommand}"/>
+            </Grid>
+
+            <!-- Plan -->
+            <Border Grid.Row="1"
+                    Stroke="{AppThemeBinding Light=#D0D5DC, Dark=#404A5C}"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 6">
+                <Grid>
+                    <controls:VuePlanUsine
+                        LargeurUsine="{Binding LargeurUsine}"
+                        HauteurUsine="{Binding HauteurUsine}"
+                        Passerelles="{Binding Passerelles}"
+                        Zones="{Binding Zones}"
+                        Machines="{Binding Machines}"
+                        Equipements="{Binding Equipements}"
+                        AfficherPrecision="{Binding AfficherPrecision}"
+                        EquipementTapeCommand="{Binding OuvrirDetailCommand}"/>
+
+                    <ActivityIndicator IsRunning="{Binding Chargement}"
+                                       IsVisible="{Binding Chargement}"
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="Center"/>
+                </Grid>
+            </Border>
+
+            <!-- Legende visuelle -->
+            <HorizontalStackLayout Grid.Row="2" Spacing="20" Padding="4,4,4,0">
+                <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                    <Ellipse WidthRequest="10" HeightRequest="10" Fill="#2177BB" Stroke="White" StrokeThickness="1" VerticalOptions="Center"/>
+                    <Label Text="Equipement mobile" FontSize="11" TextColor="{AppThemeBinding Light=#4A5461, Dark=#B0B8C4}" VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+
+                <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                    <Rectangle WidthRequest="16" HeightRequest="10" Fill="#5D6D7E" Stroke="#34495E" StrokeThickness="1" VerticalOptions="Center"/>
+                    <Label Text="Machine fixe" FontSize="11" TextColor="{AppThemeBinding Light=#4A5461, Dark=#B0B8C4}" VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+
+                <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                    <Line X1="0" Y1="0" X2="18" Y2="0" Stroke="#F39C12" StrokeThickness="2" StrokeDashArray="3,2" VerticalOptions="Center"/>
+                    <Label Text="Perimetre securite" FontSize="11" TextColor="{AppThemeBinding Light=#4A5461, Dark=#B0B8C4}" VerticalOptions="Center"/>
+                </HorizontalStackLayout>
+
+                <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
+                    <Rectangle WidthRequest="16" HeightRequest="12" Fill="#E74C3C" Opacity="0.3" Stroke="#C0392B" StrokeThickness="1" VerticalOptions="Center"/>
+                    <Label Text="Zone interdite" FontSize="11" TextColor="{AppThemeBinding Light=#4A5461, Dark=#B0B8C4}" VerticalOptions="Center"/>
+                </HorizontalStackLayout>
             </HorizontalStackLayout>
+
+            <!-- Message d'erreur (rare) -->
+            <Border Grid.Row="3"
+                    IsVisible="{Binding MessageErreur, Converter={StaticResource ConvertisseurTexteVersVisible}}"
+                    Background="#FDECEA"
+                    Stroke="#E74C3C"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 4"
+                    Padding="12,8">
+                <Label Text="{Binding MessageErreur}"
+                       TextColor="#943126"
+                       FontSize="13"/>
+            </Border>
         </Grid>
 
-        <!-- Bandeau d'alertes de zones interdites -->
-        <CollectionView Grid.Row="1"
-                        ItemsSource="{Binding Alertes}"
-                        IsVisible="{Binding Alertes.Count, Converter={StaticResource ConvertisseurCompteVersVisible}}"
-                        Margin="0,4,0,0">
-            <CollectionView.ItemsLayout>
-                <LinearItemsLayout Orientation="Vertical" ItemSpacing="4"/>
-            </CollectionView.ItemsLayout>
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="vm:AlerteApercu">
-                    <Border Background="#FDECEA"
-                            Stroke="#E74C3C"
-                            StrokeThickness="1"
-                            StrokeShape="RoundRectangle 4"
-                            Padding="10,6">
-                        <HorizontalStackLayout Spacing="8">
-                            <Label Text="⚠"
-                                   TextColor="#C0392B"
-                                   FontSize="14"
-                                   VerticalOptions="Center"/>
-                            <Label VerticalOptions="Center" FontSize="13" TextColor="#943126">
-                                <Label.FormattedText>
-                                    <FormattedString>
-                                        <Span Text="{Binding CodeEquipement}" FontAttributes="Bold"/>
-                                        <Span Text=" est dans "/>
-                                        <Span Text="{Binding ZoneNom}" FontAttributes="Bold"/>
-                                        <Span Text=" · "/>
-                                        <Span Text="{Binding HeureFormattee}" FontSize="11"/>
-                                    </FormattedString>
-                                </Label.FormattedText>
-                            </Label>
-                        </HorizontalStackLayout>
-                    </Border>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+        <!-- Voile invisible : tape n'importe ou ferme les panneaux ouverts -->
+        <BoxView Color="Transparent"
+                 IsVisible="{Binding PanneauAlertesOuvert}"
+                 InputTransparent="False">
+            <BoxView.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding FermerPanneauxCommand}"/>
+            </BoxView.GestureRecognizers>
+        </BoxView>
+        <BoxView Color="Transparent"
+                 IsVisible="{Binding PanneauMenuOuvert}"
+                 InputTransparent="False">
+            <BoxView.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding FermerPanneauxCommand}"/>
+            </BoxView.GestureRecognizers>
+        </BoxView>
 
-        <!-- Plan -->
-        <Border Grid.Row="2"
+        <!-- Panneau flottant des alertes -->
+        <Border IsVisible="{Binding PanneauAlertesOuvert}"
+                Background="{AppThemeBinding Light=White, Dark=#1E2530}"
                 Stroke="{AppThemeBinding Light=#D0D5DC, Dark=#404A5C}"
                 StrokeThickness="1"
-                StrokeShape="RoundRectangle 6">
-            <Grid>
-                <controls:VuePlanUsine
-                    LargeurUsine="{Binding LargeurUsine}"
-                    HauteurUsine="{Binding HauteurUsine}"
-                    Passerelles="{Binding Passerelles}"
-                    Zones="{Binding Zones}"
-                    Machines="{Binding Machines}"
-                    Equipements="{Binding Equipements}"
-                    AfficherPrecision="{Binding AfficherPrecision}"
-                    EquipementTapeCommand="{Binding OuvrirDetailCommand}"/>
+                StrokeShape="RoundRectangle 8"
+                HorizontalOptions="End"
+                VerticalOptions="Start"
+                WidthRequest="340"
+                MaximumHeightRequest="360"
+                Margin="0,54,60,0">
+            <Grid RowDefinitions="Auto,*,Auto" Padding="0">
+                <Grid Grid.Row="0" Padding="14,10" ColumnDefinitions="*,Auto"
+                      BackgroundColor="{AppThemeBinding Light=#F6F7F9, Dark=#2A323E}">
+                    <Label Text="Alertes recentes"
+                           FontSize="14"
+                           FontAttributes="Bold"
+                           VerticalOptions="Center"
+                           TextColor="{AppThemeBinding Light=#1E3A5F, Dark=#4FB3F0}"/>
+                    <Label Grid.Column="1"
+                           Text="{Binding Alertes.Count, StringFormat='{0} au total'}"
+                           FontSize="11"
+                           VerticalOptions="Center"
+                           TextColor="{AppThemeBinding Light=#6B7684, Dark=#A0A8B4}"/>
+                </Grid>
 
-                <ActivityIndicator IsRunning="{Binding Chargement}"
-                                   IsVisible="{Binding Chargement}"
-                                   VerticalOptions="Center"
-                                   HorizontalOptions="Center"/>
+                <CollectionView Grid.Row="1"
+                                ItemsSource="{Binding Alertes}"
+                                Margin="0,4">
+                    <CollectionView.EmptyView>
+                        <Label Text="Aucune alerte en cours."
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               Padding="20"
+                               TextColor="#6B7684"
+                               FontSize="13"/>
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="vm:AlerteApercu">
+                            <Grid Padding="14,8" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                                <Label Text="⚠" TextColor="#C0392B" FontSize="14" VerticalOptions="Center"/>
+                                <Label Grid.Column="1" VerticalOptions="Center" FontSize="13">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="{Binding CodeEquipement}" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#943126, Dark=#F5B7B1}"/>
+                                            <Span Text=" · " TextColor="{AppThemeBinding Light=#6B7684, Dark=#A0A8B4}"/>
+                                            <Span Text="{Binding ZoneNom}" TextColor="{AppThemeBinding Light=#303A4A, Dark=#E0E4EA}"/>
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                                <Label Grid.Column="2"
+                                       Text="{Binding HeureFormattee}"
+                                       FontSize="11"
+                                       VerticalOptions="Center"
+                                       TextColor="{AppThemeBinding Light=#6B7684, Dark=#A0A8B4}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Button Grid.Row="2"
+                        Text="Effacer toutes les alertes"
+                        FontSize="12"
+                        Padding="10,6"
+                        Margin="8"
+                        BackgroundColor="Transparent"
+                        TextColor="{AppThemeBinding Light=#C0392B, Dark=#F5B7B1}"
+                        BorderColor="#C0392B"
+                        BorderWidth="1"
+                        Command="{Binding EffacerAlertesCommand}"
+                        IsVisible="{Binding Alertes.Count, Converter={StaticResource ConvertisseurCompteVersVisible}}"/>
             </Grid>
         </Border>
 
-        <!-- Legende visuelle -->
-        <HorizontalStackLayout Grid.Row="3" Spacing="20" Padding="4,4,4,0">
-            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-                <Ellipse WidthRequest="10" HeightRequest="10" Fill="#2177BB" Stroke="White" StrokeThickness="1" VerticalOptions="Center"/>
-                <Label Text="Equipement mobile" FontSize="11" TextColor="{AppThemeBinding Light=#4A5461, Dark=#B0B8C4}" VerticalOptions="Center"/>
-            </HorizontalStackLayout>
-
-            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-                <Rectangle WidthRequest="16" HeightRequest="10" Fill="#5D6D7E" Stroke="#34495E" StrokeThickness="1" VerticalOptions="Center"/>
-                <Label Text="Machine fixe" FontSize="11" TextColor="{AppThemeBinding Light=#4A5461, Dark=#B0B8C4}" VerticalOptions="Center"/>
-            </HorizontalStackLayout>
-
-            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-                <Line X1="0" Y1="0" X2="18" Y2="0" Stroke="#F39C12" StrokeThickness="2" StrokeDashArray="3,2" VerticalOptions="Center"/>
-                <Label Text="Perimetre securite" FontSize="11" TextColor="{AppThemeBinding Light=#4A5461, Dark=#B0B8C4}" VerticalOptions="Center"/>
-            </HorizontalStackLayout>
-
-            <HorizontalStackLayout Spacing="6" VerticalOptions="Center">
-                <Rectangle WidthRequest="16" HeightRequest="12" Fill="#E74C3C" Opacity="0.3" Stroke="#C0392B" StrokeThickness="1" VerticalOptions="Center"/>
-                <Label Text="Zone interdite" FontSize="11" TextColor="{AppThemeBinding Light=#4A5461, Dark=#B0B8C4}" VerticalOptions="Center"/>
-            </HorizontalStackLayout>
-        </HorizontalStackLayout>
-
-        <!-- Message d'erreur -->
-        <Border Grid.Row="4"
-                IsVisible="{Binding MessageErreur, Converter={StaticResource ConvertisseurTexteVersVisible}}"
-                Background="#FDECEA"
-                Stroke="#E74C3C"
+        <!-- Panneau flottant du menu -->
+        <Border IsVisible="{Binding PanneauMenuOuvert}"
+                Background="{AppThemeBinding Light=White, Dark=#1E2530}"
+                Stroke="{AppThemeBinding Light=#D0D5DC, Dark=#404A5C}"
                 StrokeThickness="1"
-                StrokeShape="RoundRectangle 4"
-                Padding="12,8">
-            <Label Text="{Binding MessageErreur}"
-                   TextColor="#943126"
-                   FontSize="13"/>
+                StrokeShape="RoundRectangle 6"
+                HorizontalOptions="End"
+                VerticalOptions="Start"
+                WidthRequest="220"
+                Margin="0,54,12,0"
+                Padding="4">
+            <VerticalStackLayout>
+                <!-- Items de menu : Label dans une Grid tappable pour un vrai alignement gauche -->
+                <Grid Padding="12,10">
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding RafraichirCommand}"/>
+                    </Grid.GestureRecognizers>
+                    <Label Text="↻  Rafraichir"
+                           FontSize="14"
+                           TextColor="{AppThemeBinding Light=#303A4A, Dark=#E0E4EA}"/>
+                </Grid>
+                <BoxView HeightRequest="1" Color="{AppThemeBinding Light=#EAECEF, Dark=#3A4452}"/>
+                <Grid Padding="12,10">
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding BasculerPrecisionCommand}"/>
+                    </Grid.GestureRecognizers>
+                    <Label FontSize="14" TextColor="{AppThemeBinding Light=#303A4A, Dark=#E0E4EA}">
+                        <Label.Text>
+                            <MultiBinding StringFormat="{}{0}  Precision">
+                                <Binding Path="AfficherPrecision" Converter="{StaticResource ConvertisseurEtatPrecision}"/>
+                            </MultiBinding>
+                        </Label.Text>
+                    </Label>
+                </Grid>
+            </VerticalStackLayout>
         </Border>
 
     </Grid>

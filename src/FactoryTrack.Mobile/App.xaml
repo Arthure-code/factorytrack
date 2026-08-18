@@ -16,6 +16,7 @@
             <conv:ConvertisseurInverseBool x:Key="ConvertisseurInverseBool" />
             <conv:ConvertisseurTexteVersVisible x:Key="ConvertisseurTexteVersVisible" />
             <conv:ConvertisseurCompteVersVisible x:Key="ConvertisseurCompteVersVisible" />
+            <conv:ConvertisseurEtatPrecision x:Key="ConvertisseurEtatPrecision" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

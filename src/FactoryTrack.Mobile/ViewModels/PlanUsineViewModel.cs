@@ -41,6 +41,8 @@ public partial class PlanUsineViewModel : ObservableObject, IAsyncDisposable
     [ObservableProperty] private bool connecte;
     [ObservableProperty] private bool afficherPrecision;
     [ObservableProperty] private ObservableCollection<AlerteApercu> alertes = new();
+    [ObservableProperty] private bool panneauAlertesOuvert;
+    [ObservableProperty] private bool panneauMenuOuvert;
 
     public PlanUsineViewModel(
         IClientReferentiel referentiel,
@@ -114,7 +116,46 @@ public partial class PlanUsineViewModel : ObservableObject, IAsyncDisposable
     }
 
     [RelayCommand]
-    public Task RafraichirAsync() => ChargerAsync();
+    public Task RafraichirAsync()
+    {
+        PanneauMenuOuvert = false;
+        return ChargerAsync();
+    }
+
+    [RelayCommand]
+    public void BasculerPanneauAlertes()
+    {
+        PanneauMenuOuvert = false;
+        PanneauAlertesOuvert = !PanneauAlertesOuvert;
+    }
+
+    [RelayCommand]
+    public void BasculerMenu()
+    {
+        PanneauAlertesOuvert = false;
+        PanneauMenuOuvert = !PanneauMenuOuvert;
+    }
+
+    [RelayCommand]
+    public void FermerPanneaux()
+    {
+        PanneauAlertesOuvert = false;
+        PanneauMenuOuvert = false;
+    }
+
+    [RelayCommand]
+    public void EffacerAlertes()
+    {
+        Alertes.Clear();
+        PanneauAlertesOuvert = false;
+    }
+
+    [RelayCommand]
+    public void BasculerPrecision()
+    {
+        AfficherPrecision = !AfficherPrecision;
+        PanneauMenuOuvert = false;
+    }
 
     [RelayCommand]
     public async Task OuvrirDetailAsync(EquipementApercu? apercu)
