@@ -144,26 +144,25 @@ jobs:
       - name: docker compose build
         run: docker compose build api ingestion simulateur
 
+      # Installation directe de Trivy via le script officiel : evite le bug de
+      # dependance vers aquasecurity/setup-trivy@v0.2.1 (tag inexistant) qui
+      # casse trivy-action a partir de la v0.28.
+      - name: Installer Trivy
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh \
+            | sudo sh -s -- -b /usr/local/bin
+          trivy --version
+
       - name: Trivy - scan des images (HIGH/CRITICAL bloquant)
-        uses: aquasecurity/trivy-action@v0.28.0
-        with:
-          image-ref: factorytrack-api
-          severity: HIGH,CRITICAL
-          exit-code: '1'
-          ignore-unfixed: true
-
-      - name: Trivy - scan ingestion
-        uses: aquasecurity/trivy-action@v0.28.0
-        with:
-          image-ref: factorytrack-ingestion
-          severity: HIGH,CRITICAL
-          exit-code: '1'
-          ignore-unfixed: true
-
-      - name: Trivy - scan simulateur
-        uses: aquasecurity/trivy-action@v0.28.0
-        with:
-          image-ref: factorytrack-simulateur
-          severity: HIGH,CRITICAL
-          exit-code: '1'
-          ignore-unfixed: true
+        run: |
+          set -euo pipefail
+          for image in factorytrack-api factorytrack-ingestion factorytrack-simulateur; do
+            echo "::group::Scan $image"
+            trivy image \
+              --severity HIGH,CRITICAL \
+              --exit-code 1 \
+              --ignore-unfixed \
+              --no-progress \
+              "$image"
+            echo "::endgroup::"
+          done
