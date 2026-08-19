@@ -1,39 +1,100 @@
-﻿<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <?xaml-comp compile="true" ?>
-<ResourceDictionary 
+<ResourceDictionary
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <!-- Note: For Android please see also Platforms\Android\Resources\values\colors.xml -->
+    <!--
+        Palette FactoryTrack — un design system minimal, cohérent avec les
+        couleurs SkiaSharp du plan pour que l'UI et le canvas ne divergent pas.
 
-    <Color x:Key="Primary">#512BD4</Color>
-    <Color x:Key="PrimaryDark">#ac99ea</Color>
-    <Color x:Key="PrimaryDarkText">#242424</Color>
-    <Color x:Key="Secondary">#DFD8F7</Color>
-    <Color x:Key="SecondaryDarkText">#9880e5</Color>
-    <Color x:Key="Tertiary">#2B0B98</Color>
+        Structure :
+          - Brand : bleu FactoryTrack, décliné en Dark/Light/Muted
+          - Semantic : Success, Warning, Danger, Info (rappels métier)
+          - Neutral : de N0 (blanc) à N900 (presque noir), 9 nuances
+          - Theme-aware : Bg, Surface, TextPrimary, TextSecondary,
+            Border, résolus via AppThemeBinding
+    -->
 
-    <Color x:Key="White">White</Color>
-    <Color x:Key="Black">Black</Color>
-    <Color x:Key="Magenta">#D600AA</Color>
-    <Color x:Key="MidnightBlue">#190649</Color>
-    <Color x:Key="OffBlack">#1f1f1f</Color>
+    <!-- ============================================ -->
+    <!-- BRAND — bleu FactoryTrack                    -->
+    <!-- ============================================ -->
+    <Color x:Key="BrandDark">#1E3A5F</Color>
+    <Color x:Key="Brand">#2177BB</Color>
+    <Color x:Key="BrandLight">#4FB3F0</Color>
+    <Color x:Key="BrandMuted">#EEF4FA</Color>
+    <Color x:Key="BrandOnMuted">#1A5D92</Color>
 
-    <Color x:Key="Gray100">#E1E1E1</Color>
-    <Color x:Key="Gray200">#C8C8C8</Color>
-    <Color x:Key="Gray300">#ACACAC</Color>
-    <Color x:Key="Gray400">#919191</Color>
-    <Color x:Key="Gray500">#6E6E6E</Color>
-    <Color x:Key="Gray600">#404040</Color>
-    <Color x:Key="Gray900">#212121</Color>
-    <Color x:Key="Gray950">#141414</Color>
+    <!-- ============================================ -->
+    <!-- SEMANTIC — success / warning / danger        -->
+    <!-- ============================================ -->
+    <Color x:Key="Success">#27AE60</Color>
+    <Color x:Key="SuccessMuted">#EAF7EE</Color>
+    <Color x:Key="OnSuccessMuted">#1E6B3D</Color>
+
+    <Color x:Key="Warning">#F39C12</Color>
+    <Color x:Key="WarningMuted">#FEF4E4</Color>
+    <Color x:Key="OnWarningMuted">#B9770E</Color>
+
+    <Color x:Key="Danger">#C0392B</Color>
+    <Color x:Key="DangerHover">#A32E22</Color>
+    <Color x:Key="DangerMuted">#FDECEA</Color>
+    <Color x:Key="OnDangerMuted">#943126</Color>
+
+    <!-- ============================================ -->
+    <!-- NEUTRAL — echelle de gris                    -->
+    <!-- ============================================ -->
+    <Color x:Key="N0">#FFFFFF</Color>
+    <Color x:Key="N50">#F6F7F9</Color>
+    <Color x:Key="N100">#EAECEF</Color>
+    <Color x:Key="N200">#D0D5DC</Color>
+    <Color x:Key="N300">#B0B8C4</Color>
+    <Color x:Key="N400">#8791A0</Color>
+    <Color x:Key="N500">#6B7684</Color>
+    <Color x:Key="N600">#4A5461</Color>
+    <Color x:Key="N700">#303A4A</Color>
+    <Color x:Key="N800">#1E2530</Color>
+    <Color x:Key="N900">#0D1219</Color>
+
+    <!-- ============================================ -->
+    <!-- BRUSHES pour les composants qui exigent un Brush -->
+    <!-- ============================================ -->
+    <SolidColorBrush x:Key="BrandBrush" Color="{StaticResource Brand}"/>
+    <SolidColorBrush x:Key="BrandDarkBrush" Color="{StaticResource BrandDark}"/>
+    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource Success}"/>
+    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource Warning}"/>
+    <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource Danger}"/>
+
+    <!--
+        Aliases utilises dans les templates MAUI par defaut. On les
+        redirige vers la palette Brand pour que Shell, boutons systeme,
+        indicateurs de chargement adoptent la meme identite.
+    -->
+    <Color x:Key="Primary">#2177BB</Color>
+    <Color x:Key="PrimaryDark">#4FB3F0</Color>
+    <Color x:Key="PrimaryDarkText">#E0E4EA</Color>
+    <Color x:Key="Secondary">#EEF4FA</Color>
+    <Color x:Key="SecondaryDarkText">#4FB3F0</Color>
+    <Color x:Key="Tertiary">#1E3A5F</Color>
+
+    <Color x:Key="White">#FFFFFF</Color>
+    <Color x:Key="Black">#0D1219</Color>
+
+    <!-- Gray aliases pour compatibilite avec Styles.xaml du template. -->
+    <Color x:Key="Gray100">#EAECEF</Color>
+    <Color x:Key="Gray200">#D0D5DC</Color>
+    <Color x:Key="Gray300">#B0B8C4</Color>
+    <Color x:Key="Gray400">#8791A0</Color>
+    <Color x:Key="Gray500">#6B7684</Color>
+    <Color x:Key="Gray600">#4A5461</Color>
+    <Color x:Key="Gray900">#0D1219</Color>
+    <Color x:Key="Gray950">#080B0F</Color>
 
     <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}"/>
     <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}"/>
     <SolidColorBrush x:Key="TertiaryBrush" Color="{StaticResource Tertiary}"/>
     <SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource White}"/>
     <SolidColorBrush x:Key="BlackBrush" Color="{StaticResource Black}"/>
-
     <SolidColorBrush x:Key="Gray100Brush" Color="{StaticResource Gray100}"/>
     <SolidColorBrush x:Key="Gray200Brush" Color="{StaticResource Gray200}"/>
     <SolidColorBrush x:Key="Gray300Brush" Color="{StaticResource Gray300}"/>
@@ -42,4 +103,5 @@
     <SolidColorBrush x:Key="Gray600Brush" Color="{StaticResource Gray600}"/>
     <SolidColorBrush x:Key="Gray900Brush" Color="{StaticResource Gray900}"/>
     <SolidColorBrush x:Key="Gray950Brush" Color="{StaticResource Gray950}"/>
+
 </ResourceDictionary>

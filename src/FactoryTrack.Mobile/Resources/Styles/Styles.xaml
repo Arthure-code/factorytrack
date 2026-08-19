@@ -437,4 +437,133 @@
         <Setter Property="SelectedTabColor" Value="{AppThemeBinding Light={StaticResource Gray950}, Dark={StaticResource Gray200}}" />
     </Style>
 
+    <!-- ================================================================= -->
+    <!-- FACTORYTRACK — styles applicatifs                                 -->
+    <!--                                                                   -->
+    <!-- Regle : aucun hex ne devrait apparaitre dans une page. Toute      -->
+    <!-- couleur passe par la palette (Colors.xaml) et tout composant     -->
+    <!-- reutilise l'un de ces styles.                                     -->
+    <!-- ================================================================= -->
+
+    <!-- ============ LABELS TYPOGRAPHIQUES ============ -->
+
+    <Style x:Key="LabelTitreEcran" TargetType="Label">
+        <Setter Property="FontSize" Value="22"/>
+        <Setter Property="FontAttributes" Value="Bold"/>
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource BrandDark}, Dark={StaticResource BrandLight}}"/>
+    </Style>
+
+    <Style x:Key="LabelTitreCarte" TargetType="Label">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontAttributes" Value="Bold"/>
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource BrandDark}, Dark={StaticResource BrandLight}}"/>
+    </Style>
+
+    <Style x:Key="LabelCorps" TargetType="Label">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource N700}, Dark={StaticResource N100}}"/>
+    </Style>
+
+    <Style x:Key="LabelDiscret" TargetType="Label">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource N500}, Dark={StaticResource N300}}"/>
+    </Style>
+
+    <Style x:Key="LabelStatistique" TargetType="Label">
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontAttributes" Value="Bold"/>
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource BrandOnMuted}, Dark={StaticResource BrandLight}}"/>
+    </Style>
+
+    <!-- ============ BOUTONS — VARIANTES ============ -->
+
+    <!--
+        Base commune aux boutons metier. MAUI ne permet pas de BasedOn sur
+        un style implicite typé : on repete les proprietes non-couleur ici
+        et chaque variante n'override que le fond/texte.
+    -->
+    <Style x:Key="BoutonSecondaire" TargetType="Button">
+        <Setter Property="FontFamily" Value="OpenSansRegular"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="14,10"/>
+        <Setter Property="MinimumHeightRequest" Value="44"/>
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource N100}, Dark={StaticResource N700}}"/>
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource N700}, Dark={StaticResource N100}}"/>
+    </Style>
+
+    <Style x:Key="BoutonDanger" TargetType="Button">
+        <Setter Property="FontFamily" Value="OpenSansRegular"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="14,10"/>
+        <Setter Property="MinimumHeightRequest" Value="44"/>
+        <Setter Property="BackgroundColor" Value="{StaticResource Danger}"/>
+        <Setter Property="TextColor" Value="{StaticResource N0}"/>
+    </Style>
+
+    <Style x:Key="BoutonDangerOutline" TargetType="Button">
+        <Setter Property="FontFamily" Value="OpenSansRegular"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="14,10"/>
+        <Setter Property="MinimumHeightRequest" Value="44"/>
+        <Setter Property="BackgroundColor" Value="Transparent"/>
+        <Setter Property="TextColor" Value="{StaticResource Danger}"/>
+        <Setter Property="BorderColor" Value="{StaticResource Danger}"/>
+        <Setter Property="BorderWidth" Value="1"/>
+    </Style>
+
+    <!-- Boutons discrets pour icones (cloche, menu 3 points, rafraichir). -->
+    <Style x:Key="BoutonIcone" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="Transparent"/>
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource N700}, Dark={StaticResource N100}}"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="MinimumHeightRequest" Value="36"/>
+        <Setter Property="MinimumWidthRequest" Value="36"/>
+    </Style>
+
+    <!-- ============ BORDERS — CARTES ET ALERTES ============ -->
+
+    <Style x:Key="BorderCarte" TargetType="Border">
+        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource N200}, Dark={StaticResource N600}}"/>
+        <Setter Property="StrokeThickness" Value="1"/>
+        <Setter Property="StrokeShape" Value="RoundRectangle 6"/>
+    </Style>
+
+    <Style x:Key="BorderAlerteDanger" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource DangerMuted}"/>
+        <Setter Property="Stroke" Value="{StaticResource Danger}"/>
+        <Setter Property="StrokeThickness" Value="1"/>
+        <Setter Property="StrokeShape" Value="RoundRectangle 4"/>
+        <Setter Property="Padding" Value="12,8"/>
+    </Style>
+
+    <Style x:Key="BorderAlerteSuccess" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource SuccessMuted}"/>
+        <Setter Property="Stroke" Value="{StaticResource Success}"/>
+        <Setter Property="StrokeThickness" Value="1"/>
+        <Setter Property="StrokeShape" Value="RoundRectangle 4"/>
+        <Setter Property="Padding" Value="12,8"/>
+    </Style>
+
+    <Style x:Key="BorderAlerteWarning" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource WarningMuted}"/>
+        <Setter Property="Stroke" Value="{StaticResource Warning}"/>
+        <Setter Property="StrokeThickness" Value="1"/>
+        <Setter Property="StrokeShape" Value="RoundRectangle 4"/>
+        <Setter Property="Padding" Value="12,8"/>
+    </Style>
+
+    <!--
+        Badge circulaire (compteur d'alertes de la cloche). Le TextColor
+        et FontSize sont fixes ici pour rester lisible a taille reduite.
+    -->
+    <Style x:Key="BorderBadgeCompteur" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource Danger}"/>
+        <Setter Property="Stroke" Value="{StaticResource N0}"/>
+        <Setter Property="StrokeThickness" Value="1.5"/>
+        <Setter Property="StrokeShape" Value="RoundRectangle 9"/>
+    </Style>
+
 </ResourceDictionary>
