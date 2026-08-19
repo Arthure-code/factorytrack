@@ -63,7 +63,7 @@ jobs:
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.exclusions="src/FactoryTrack.Mobile/**,**/obj/**,**/bin/**,db/init/**" \
             /d:sonar.coverage.exclusions="tests/**,src/FactoryTrack.Simulator/**,src/FactoryTrack.Mobile/**" \
-            /d:sonar.cs.opencover.reportsPaths="**/coverage.opencover.xml" \
+            /d:sonar.cs.opencover.reportsPaths="**/*.opencover.xml" \
             /d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
 
       - name: dotnet restore
