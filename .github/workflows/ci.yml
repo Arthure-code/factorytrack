@@ -24,24 +24,24 @@ jobs:
 
     steps:
       - name: Checkout complet (Sonar blame)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Installer .NET SDK 9
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: '9.0.x'
 
       - name: Cache NuGet
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.nuget/packages
           key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj') }}
           restore-keys: nuget-${{ runner.os }}-
 
       - name: Installer JDK 17 (requis par SonarCloud scanner)
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
@@ -87,14 +87,14 @@ jobs:
 
       - name: Publier les resultats de tests
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-results
           path: '**/TestResults/*.trx'
 
       - name: Publier la couverture
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: coverage
           path: coverage/*.opencover.xml
@@ -120,9 +120,9 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: '9.0.x'
 
@@ -139,13 +139,13 @@ jobs:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: docker compose build
         run: docker compose build api ingestion simulateur
 
       - name: Trivy - scan des images (HIGH/CRITICAL bloquant)
-        uses: aquasecurity/trivy-action@v0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: factorytrack-api
           severity: HIGH,CRITICAL
@@ -153,7 +153,7 @@ jobs:
           ignore-unfixed: true
 
       - name: Trivy - scan ingestion
-        uses: aquasecurity/trivy-action@v0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: factorytrack-ingestion
           severity: HIGH,CRITICAL
@@ -161,7 +161,7 @@ jobs:
           ignore-unfixed: true
 
       - name: Trivy - scan simulateur
-        uses: aquasecurity/trivy-action@v0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: factorytrack-simulateur
           severity: HIGH,CRITICAL
