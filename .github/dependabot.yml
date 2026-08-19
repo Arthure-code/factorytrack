@@ -12,6 +12,29 @@ updates:
       interval: 'weekly'
       day: 'monday'
     open-pull-requests-limit: 10
+
+    # Bumps qui casseraient le build ou changeraient la licence.
+    # A revoir si on migre en .NET 10 ou si on remplace FluentAssertions.
+    ignore:
+      # FluentAssertions 7+ est passe en licence commerciale (~130 $/dev/an).
+      # On reste en 6.x jusqu'a migration vers Shouldly ou equivalent.
+      - dependency-name: 'FluentAssertions'
+        versions: ['>=7']
+
+      # Les majors 10.x de Microsoft.* exigent le SDK .NET 10. Tant que le
+      # projet cible net9.0, on refuse ces bumps ; les minors et patches
+      # 9.x restent autorises et groupes plus bas.
+      - dependency-name: 'Microsoft.Extensions.*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'Microsoft.AspNetCore.*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'Microsoft.EntityFrameworkCore*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'Npgsql.EntityFrameworkCore.*'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'System.*'
+        update-types: ['version-update:semver-major']
+
     groups:
       # Regroupe les updates mineures/patch pour eviter le bruit :
       # une PR par famille au lieu de dizaines.
@@ -47,6 +70,11 @@ updates:
     schedule:
       interval: 'weekly'
       day: 'monday'
+    groups:
+      # Meme logique : une PR par lot au lieu de 5 PRs individuelles.
+      actions:
+        patterns:
+          - '*'
 
   # Base Docker images.
   - package-ecosystem: 'docker'
