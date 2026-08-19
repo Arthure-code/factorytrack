@@ -4,6 +4,7 @@ WORKDIR /source
 COPY src/FactoryTrack.Domain/*.csproj src/FactoryTrack.Domain/
 COPY src/FactoryTrack.Contracts/*.csproj src/FactoryTrack.Contracts/
 COPY src/FactoryTrack.Infrastructure/*.csproj src/FactoryTrack.Infrastructure/
+COPY src/FactoryTrack.Positioning/*.csproj src/FactoryTrack.Positioning/
 COPY src/FactoryTrack.Ingestion/*.csproj src/FactoryTrack.Ingestion/
 RUN dotnet restore src/FactoryTrack.Ingestion/FactoryTrack.Ingestion.csproj
 
