@@ -566,4 +566,118 @@
         <Setter Property="StrokeShape" Value="RoundRectangle 9"/>
     </Style>
 
+    <!-- ================================================================= -->
+    <!-- FORMULAIRES (Entry, Editor, Picker, DatePicker, Switch, CheckBox) -->
+    <!--                                                                   -->
+    <!-- Styles implicites theme-aware. Un projet portefeuille industriel  -->
+    <!-- doit avoir un rendu de saisie coherent avec le reste.              -->
+    <!-- ================================================================= -->
+
+    <Style TargetType="Entry">
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource N700}, Dark={StaticResource N100}}"/>
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource N50}, Dark={StaticResource N800}}"/>
+        <Setter Property="PlaceholderColor" Value="{AppThemeBinding Light={StaticResource N400}, Dark={StaticResource N400}}"/>
+        <Setter Property="FontFamily" Value="OpenSansRegular"/>
+        <Setter Property="FontSize" Value="{StaticResource FontSizeM}"/>
+        <Setter Property="MinimumHeightRequest" Value="44"/>
+    </Style>
+
+    <Style TargetType="Editor">
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource N700}, Dark={StaticResource N100}}"/>
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource N50}, Dark={StaticResource N800}}"/>
+        <Setter Property="PlaceholderColor" Value="{AppThemeBinding Light={StaticResource N400}, Dark={StaticResource N400}}"/>
+        <Setter Property="FontFamily" Value="OpenSansRegular"/>
+        <Setter Property="FontSize" Value="{StaticResource FontSizeM}"/>
+        <Setter Property="MinimumHeightRequest" Value="120"/>
+    </Style>
+
+    <Style TargetType="Picker">
+        <Setter Property="TitleColor" Value="{AppThemeBinding Light={StaticResource N400}, Dark={StaticResource N400}}"/>
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource N700}, Dark={StaticResource N100}}"/>
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource N50}, Dark={StaticResource N800}}"/>
+        <Setter Property="FontFamily" Value="OpenSansRegular"/>
+        <Setter Property="FontSize" Value="{StaticResource FontSizeM}"/>
+    </Style>
+
+    <Style TargetType="DatePicker">
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource N700}, Dark={StaticResource N100}}"/>
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource N50}, Dark={StaticResource N800}}"/>
+        <Setter Property="FontFamily" Value="OpenSansRegular"/>
+        <Setter Property="FontSize" Value="{StaticResource FontSizeM}"/>
+    </Style>
+
+    <Style TargetType="TimePicker">
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource N700}, Dark={StaticResource N100}}"/>
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource N50}, Dark={StaticResource N800}}"/>
+        <Setter Property="FontFamily" Value="OpenSansRegular"/>
+        <Setter Property="FontSize" Value="{StaticResource FontSizeM}"/>
+    </Style>
+
+    <!-- Switch : bleu Brand quand actif, gris muet quand off. -->
+    <Style TargetType="Switch">
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="On">
+                        <VisualState.Setters>
+                            <Setter Property="OnColor" Value="{StaticResource Brand}"/>
+                            <Setter Property="ThumbColor" Value="{StaticResource N0}"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Off">
+                        <VisualState.Setters>
+                            <Setter Property="ThumbColor" Value="{StaticResource N300}"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <Style TargetType="CheckBox">
+        <Setter Property="Color" Value="{StaticResource Brand}"/>
+        <Setter Property="MinimumHeightRequest" Value="24"/>
+        <Setter Property="MinimumWidthRequest" Value="24"/>
+    </Style>
+
+    <!-- ================================================================= -->
+    <!-- POPUPS / MODALES                                                  -->
+    <!--                                                                   -->
+    <!-- Pattern reutilisable pour "A propos", "Confirmer la purge", etc. -->
+    <!-- On les compose comme un Border racine + les styles ci-dessous.   -->
+    <!-- ================================================================= -->
+
+    <Style x:Key="PopupConteneur" TargetType="Border">
+        <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource N0}, Dark={StaticResource N800}}"/>
+        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource N200}, Dark={StaticResource N600}}"/>
+        <Setter Property="StrokeThickness" Value="1"/>
+        <Setter Property="StrokeShape" Value="RoundRectangle 8"/>
+        <Setter Property="Padding" Value="16"/>
+        <Setter Property="WidthRequest" Value="340"/>
+        <Setter Property="HorizontalOptions" Value="Center"/>
+        <Setter Property="VerticalOptions" Value="Center"/>
+    </Style>
+
+    <Style x:Key="PopupTitre" TargetType="Label">
+        <Setter Property="FontSize" Value="{StaticResource FontSizeL}"/>
+        <Setter Property="FontAttributes" Value="Bold"/>
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource BrandDark}, Dark={StaticResource BrandLight}}"/>
+        <Setter Property="Margin" Value="0,0,0,8"/>
+    </Style>
+
+    <Style x:Key="PopupMessage" TargetType="Label">
+        <Setter Property="FontSize" Value="{StaticResource FontSizeM}"/>
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource N700}, Dark={StaticResource N100}}"/>
+        <Setter Property="Margin" Value="0,0,0,16"/>
+    </Style>
+
+    <!--
+        Voile semi-opaque sous une popup pour capter le tap "hors modale".
+        Utilisation : superposer sur toute la Grid racine avec IsVisible.
+    -->
+    <Style x:Key="PopupVoile" TargetType="BoxView">
+        <Setter Property="Color" Value="{StaticResource N900}"/>
+        <Setter Property="Opacity" Value="0.4"/>
+    </Style>
+
 </ResourceDictionary>
