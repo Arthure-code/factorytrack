@@ -145,7 +145,7 @@ jobs:
         run: docker compose build api ingestion simulateur
 
       - name: Trivy - scan des images (HIGH/CRITICAL bloquant)
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.28.0
         with:
           image-ref: factorytrack-api
           severity: HIGH,CRITICAL
@@ -153,7 +153,7 @@ jobs:
           ignore-unfixed: true
 
       - name: Trivy - scan ingestion
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.28.0
         with:
           image-ref: factorytrack-ingestion
           severity: HIGH,CRITICAL
@@ -161,7 +161,7 @@ jobs:
           ignore-unfixed: true
 
       - name: Trivy - scan simulateur
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.28.0
         with:
           image-ref: factorytrack-simulateur
           severity: HIGH,CRITICAL
