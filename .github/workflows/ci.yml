@@ -62,7 +62,7 @@ jobs:
             /d:sonar.token="$SONAR_TOKEN" \
             /d:sonar.host.url="https://sonarcloud.io" \
             /d:sonar.exclusions="src/FactoryTrack.Mobile/**,**/obj/**,**/bin/**,db/init/**" \
-            /d:sonar.coverage.exclusions="tests/**,src/FactoryTrack.Simulator/**,src/FactoryTrack.Mobile/**,**/Program.cs,**/MauiProgram.cs,**/InjectionDependances.cs,**/Configurations/**,**/Entites/**,**/Dtos/**,**/Enums/**,**/Options/**,**/NomsHub.cs,**/Interfaces/**,**/Depots/DepotReferentiel.cs,**/Hubs/**,**/ServiceSurveillanceSilence.cs,**/ServiceSurveillanceZones.cs,**/PublicateurSignalR.cs" \
+            /d:sonar.coverage.exclusions="tests/**,src/FactoryTrack.Simulator/**,src/FactoryTrack.Mobile/**,**/Program.cs,**/MauiProgram.cs,**/InjectionDependances.cs,**/Configurations/**,**/Entites/**,**/Dtos/**,**/Enums/**,**/Options/**,**/NomsHub.cs,**/Interfaces/**,**/Depots/DepotReferentiel.cs,**/Hubs/**,**/ServiceSurveillanceSilence.cs,**/ServiceSurveillanceZones.cs,**/ServiceSurveillancePeriodique.cs,**/PublicateurSignalR.cs" \
             /d:sonar.cs.opencover.reportsPaths="**/*.opencover.xml" \
             /d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
 

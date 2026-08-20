@@ -8,14 +8,13 @@ using Microsoft.Extensions.Options;
 
 namespace FactoryTrack.Api.Services;
 
-public class ServiceSurveillanceSilence : BackgroundService
+public class ServiceSurveillanceSilence : ServiceSurveillancePeriodique
 {
     private static readonly TimeSpan PERIODE = TimeSpan.FromSeconds(10);
 
     private readonly IServiceScopeFactory _fabriquePortee;
     private readonly IHubContext<PositionHub> _hub;
     private readonly OptionsPositionnement _options;
-    private readonly ILogger<ServiceSurveillanceSilence> _logger;
 
     private readonly ConcurrentDictionary<string, bool> _etatSilencieux = new();
 
@@ -24,32 +23,14 @@ public class ServiceSurveillanceSilence : BackgroundService
         IHubContext<PositionHub> hub,
         IOptions<OptionsPositionnement> options,
         ILogger<ServiceSurveillanceSilence> logger)
+        : base(PERIODE, "des silences", logger)
     {
         _fabriquePortee = fabriquePortee;
         _hub = hub;
         _options = options.Value;
-        _logger = logger;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        using var minuterie = new PeriodicTimer(PERIODE);
-
-        while (await minuterie.WaitForNextTickAsync(stoppingToken))
-        {
-            try
-            {
-                await VerifierAsync(stoppingToken);
-            }
-            catch (Exception ex) when (ex is not OperationCanceledException)
-            {
-
-                _logger.LogError(ex, "Echec du cycle de surveillance.");
-            }
-        }
-    }
-
-    private async Task VerifierAsync(CancellationToken jeton)
+    protected override async Task VerifierAsync(CancellationToken jeton)
     {
         using var portee = _fabriquePortee.CreateScope();
         var depotPositions = portee.ServiceProvider.GetRequiredService<IDepotPositions>();

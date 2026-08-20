@@ -8,13 +8,12 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace FactoryTrack.Api.Services;
 
-public class ServiceSurveillanceZones : BackgroundService
+public class ServiceSurveillanceZones : ServiceSurveillancePeriodique
 {
     private static readonly TimeSpan PERIODE = TimeSpan.FromSeconds(5);
 
     private readonly IServiceScopeFactory _fabriquePortee;
     private readonly IHubContext<PositionHub> _hub;
-    private readonly ILogger<ServiceSurveillanceZones> _logger;
 
     private readonly ConcurrentDictionary<string, HashSet<Guid>> _alertesParBalise = new();
 
@@ -22,30 +21,13 @@ public class ServiceSurveillanceZones : BackgroundService
         IServiceScopeFactory fabriquePortee,
         IHubContext<PositionHub> hub,
         ILogger<ServiceSurveillanceZones> logger)
+        : base(PERIODE, "des zones", logger)
     {
         _fabriquePortee = fabriquePortee;
         _hub = hub;
-        _logger = logger;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        using var minuterie = new PeriodicTimer(PERIODE);
-
-        while (await minuterie.WaitForNextTickAsync(stoppingToken))
-        {
-            try
-            {
-                await VerifierAsync(stoppingToken);
-            }
-            catch (Exception ex) when (ex is not OperationCanceledException)
-            {
-                _logger.LogError(ex, "Echec du cycle de surveillance des zones.");
-            }
-        }
-    }
-
-    private async Task VerifierAsync(CancellationToken jeton)
+    protected override async Task VerifierAsync(CancellationToken jeton)
     {
         using var portee = _fabriquePortee.CreateScope();
         var depotPositions = portee.ServiceProvider.GetRequiredService<IDepotPositions>();
