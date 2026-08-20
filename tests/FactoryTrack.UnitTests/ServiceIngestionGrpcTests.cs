@@ -120,6 +120,24 @@ public class ServiceIngestionGrpcTests
     }
 
     [Fact]
+    public async Task EnvoyerMesures_FenetreDepassee_FermeLeGroupeParAge()
+    {
+        var banc = new BancEssai();
+        var horodatage = DateTimeOffset.UtcNow;
+
+        var messages = CreerMessagesPour(30, 20, horodatage).Take(3).ToList();
+        var retardataire = CreerMessagesPour(30, 20, horodatage.AddSeconds(2))[0];
+        messages.Add(retardataire);
+
+        var accuse = await banc.Service.EnvoyerMesures(new FluxLecture(messages), new ContexteAppelTest());
+
+        accuse.Acceptees.Should().Be(4);
+        accuse.PositionsCalculees.Should().Be(1, "le groupe initial de 3 ancres est ferme par depassement de fenetre");
+        banc.DepotPositions.Enregistrees.Should().ContainSingle()
+            .Which.NombreAncres.Should().Be(3);
+    }
+
+    [Fact]
     public async Task Ping_RetourneLaVersionEtUnHorodatage()
     {
         var banc = new BancEssai();

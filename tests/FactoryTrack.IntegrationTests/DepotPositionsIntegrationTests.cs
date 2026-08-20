@@ -63,6 +63,31 @@ public class DepotPositionsIntegrationTests : BaseTimescaleDb
         await action.Should().ThrowAsync<Exception>();
     }
 
+    [Fact]
+    public async Task EnregistrerLot_VidePuisRempli_NEcritQueLeLotRempli()
+    {
+        await using var contexte = CreerContexte();
+        var depot = new DepotPositions(contexte);
+
+        var balise = Guid.NewGuid();
+        var reference = DateTimeOffset.UtcNow.AddMinutes(-5);
+
+        await depot.EnregistrerLotAsync(Array.Empty<Position>());
+
+        await depot.EnregistrerLotAsync(
+        [
+            Fabriquer(balise, reference, x: 1),
+            Fabriquer(balise, reference.AddSeconds(10), x: 2)
+        ]);
+
+        var historique = await depot.ObtenirHistoriqueAsync(
+            balise, reference.AddMinutes(-1), reference.AddMinutes(1));
+
+        historique.Should().HaveCount(2);
+        historique[0].X.Should().Be(1);
+        historique[1].X.Should().Be(2);
+    }
+
     private static Position Fabriquer(Guid balise, DateTimeOffset horodatage, double x) => new()
     {
         BaliseId = balise,

@@ -50,6 +50,20 @@ public class GardeIdempotenceTests
     }
 
     [Fact]
+    public async Task Accepter_ApresPurgeDeRetention_ReaccepteLaCle()
+    {
+        using var garde = CreerGarde(retentionSecondes: 1);
+        const string cle = "TAG-001|GW-01|1234567890";
+
+        garde.Accepter(cle).Should().BeTrue();
+        garde.Accepter(cle).Should().BeFalse();
+
+        await Task.Delay(TimeSpan.FromSeconds(2.6));
+
+        garde.Accepter(cle).Should().BeTrue("la purge periodique a expire la cle");
+    }
+
+    [Fact]
     public void Dispose_LibereRessources_SansException()
     {
         var garde = CreerGarde();
