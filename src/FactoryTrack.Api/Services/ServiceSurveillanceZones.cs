@@ -14,33 +14,33 @@ public class ServiceSurveillanceZones : BackgroundService
 
     private readonly IServiceScopeFactory _fabriquePortee;
     private readonly IHubContext<PositionHub> _hub;
-    private readonly ILogger<ServiceSurveillanceZones> _journal;
+    private readonly ILogger<ServiceSurveillanceZones> _logger;
 
     private readonly ConcurrentDictionary<string, HashSet<Guid>> _alertesParBalise = new();
 
     public ServiceSurveillanceZones(
         IServiceScopeFactory fabriquePortee,
         IHubContext<PositionHub> hub,
-        ILogger<ServiceSurveillanceZones> journal)
+        ILogger<ServiceSurveillanceZones> logger)
     {
         _fabriquePortee = fabriquePortee;
         _hub = hub;
-        _journal = journal;
+        _logger = logger;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken jeton)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         using var minuterie = new PeriodicTimer(PERIODE);
 
-        while (await minuterie.WaitForNextTickAsync(jeton))
+        while (await minuterie.WaitForNextTickAsync(stoppingToken))
         {
             try
             {
-                await VerifierAsync(jeton);
+                await VerifierAsync(stoppingToken);
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                _journal.LogError(ex, "Echec du cycle de surveillance des zones.");
+                _logger.LogError(ex, "Echec du cycle de surveillance des zones.");
             }
         }
     }

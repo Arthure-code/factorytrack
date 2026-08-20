@@ -8,7 +8,7 @@ namespace FactoryTrack.Mobile.Services;
 public sealed class ServiceTempsReel : IServiceTempsReel
 {
     private readonly OptionsApi _options;
-    private readonly ILogger<ServiceTempsReel> _journal;
+    private readonly ILogger<ServiceTempsReel> _logger;
     private readonly SemaphoreSlim _verrou = new(1, 1);
 
     private HubConnection? _connexion;
@@ -21,10 +21,10 @@ public sealed class ServiceTempsReel : IServiceTempsReel
     public event Action<AlerteZoneDto>? AlerteZoneSortie;
     public event Func<Task>? Resynchronisation;
 
-    public ServiceTempsReel(OptionsApi options, ILogger<ServiceTempsReel> journal)
+    public ServiceTempsReel(OptionsApi options, ILogger<ServiceTempsReel> logger)
     {
         _options = options;
-        _journal = journal;
+        _logger = logger;
     }
 
     public bool EstConnecte => _connexion?.State == HubConnectionState.Connected;
@@ -61,7 +61,7 @@ public sealed class ServiceTempsReel : IServiceTempsReel
 
                 _connexion.Reconnected += async _ =>
                 {
-                    _journal.LogInformation("Reconnexion SignalR : reprise sur l'etage {Etage}.", _etageCourant);
+                    _logger.LogInformation("Reconnexion SignalR : reprise sur l'etage {Etage}.", _etageCourant);
                     await _connexion.InvokeAsync("RejoindreEtage", _etageCourant);
 
                     if (Resynchronisation is not null)
@@ -104,7 +104,7 @@ public sealed class ServiceTempsReel : IServiceTempsReel
         }
         catch (Exception ex)
         {
-            _journal.LogWarning(ex, "Arret SignalR : erreur non bloquante.");
+            _logger.LogWarning(ex, "Arret SignalR : erreur non bloquante.");
         }
     }
 

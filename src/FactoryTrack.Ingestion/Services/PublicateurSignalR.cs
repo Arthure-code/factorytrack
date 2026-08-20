@@ -12,11 +12,11 @@ public class PublicateurSignalR : IPublicateurPositions, IAsyncDisposable
 
     private readonly HubConnection _connexion;
     private readonly SemaphoreSlim _verrouDemarrage = new(1, 1);
-    private readonly ILogger<PublicateurSignalR> _journal;
+    private readonly ILogger<PublicateurSignalR> _logger;
 
-    public PublicateurSignalR(IConfiguration configuration, ILogger<PublicateurSignalR> journal)
+    public PublicateurSignalR(IConfiguration configuration, ILogger<PublicateurSignalR> logger)
     {
-        _journal = journal;
+        _logger = logger;
 
         var url = configuration["Api:UrlHub"]
             ?? throw new InvalidOperationException("Configuration manquante : Api:UrlHub");
@@ -28,7 +28,7 @@ public class PublicateurSignalR : IPublicateurPositions, IAsyncDisposable
 
         _connexion.Reconnected += id =>
         {
-            _journal.LogInformation("Reconnexion au hub etablie ({Id}).", id);
+            _logger.LogInformation("Reconnexion au hub etablie ({Id}).", id);
             return Task.CompletedTask;
         };
     }
@@ -40,7 +40,7 @@ public class PublicateurSignalR : IPublicateurPositions, IAsyncDisposable
 
         if (_connexion.State != HubConnectionState.Connected)
         {
-            _journal.LogWarning("Hub indisponible : position de {Balise} non diffusee.", position.BaliseIdentifiant);
+            _logger.LogWarning("Hub indisponible : position de {Balise} non diffusee.", position.BaliseIdentifiant);
             return;
         }
 
@@ -72,7 +72,7 @@ public class PublicateurSignalR : IPublicateurPositions, IAsyncDisposable
         catch (Exception ex)
         {
 
-            _journal.LogError(ex, "Connexion au hub impossible.");
+            _logger.LogError(ex, "Connexion au hub impossible.");
         }
         finally
         {

@@ -9,7 +9,7 @@ namespace FactoryTrack.Mobile.ViewModels;
 public partial class HistoriqueAlertesViewModel : ObservableObject
 {
     private readonly IClientAlertes _client;
-    private readonly ILogger<HistoriqueAlertesViewModel> _journal;
+    private readonly ILogger<HistoriqueAlertesViewModel> _logger;
 
     [ObservableProperty] private ObservableCollection<AlerteHistoriqueApercu> alertes = new();
     [ObservableProperty] private bool chargement;
@@ -19,10 +19,10 @@ public partial class HistoriqueAlertesViewModel : ObservableObject
 
     public HistoriqueAlertesViewModel(
         IClientAlertes client,
-        ILogger<HistoriqueAlertesViewModel> journal)
+        ILogger<HistoriqueAlertesViewModel> logger)
     {
         _client = client;
-        _journal = journal;
+        _logger = logger;
     }
 
     [RelayCommand]
@@ -51,7 +51,7 @@ public partial class HistoriqueAlertesViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            _journal.LogError(ex, "Chargement de l'historique impossible.");
+            _logger.LogError(ex, "Chargement de l'historique impossible.");
             MessageErreur = "Impossible de charger l'historique. Verifier la connexion.";
         }
         finally
@@ -88,7 +88,7 @@ public partial class HistoriqueAlertesViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            _journal.LogError(ex, "Suppression de la selection impossible.");
+            _logger.LogError(ex, "Suppression de la selection impossible.");
             MessageErreur = "Suppression partiellement echouee. Rafraichir.";
         }
     }
@@ -117,7 +117,7 @@ public partial class HistoriqueAlertesViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            _journal.LogError(ex, "Suppression par lot impossible.");
+            _logger.LogError(ex, "Suppression par lot impossible.");
             MessageErreur = "Suppression par lot echouee.";
         }
     }

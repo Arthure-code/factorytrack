@@ -16,7 +16,7 @@ public partial class DetailEquipementViewModel : ObservableObject
     private static readonly TimeSpan FENETRE = TimeSpan.FromMinutes(30);
 
     private readonly IClientReferentiel _referentiel;
-    private readonly ILogger<DetailEquipementViewModel> _journal;
+    private readonly ILogger<DetailEquipementViewModel> _logger;
 
     [ObservableProperty] private string? baliseId;
     [ObservableProperty] private string? code;
@@ -36,10 +36,10 @@ public partial class DetailEquipementViewModel : ObservableObject
 
     public DetailEquipementViewModel(
         IClientReferentiel referentiel,
-        ILogger<DetailEquipementViewModel> journal)
+        ILogger<DetailEquipementViewModel> logger)
     {
         _referentiel = referentiel;
-        _journal = journal;
+        _logger = logger;
     }
 
     partial void OnBaliseIdChanged(string? value)
@@ -79,7 +79,7 @@ public partial class DetailEquipementViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            _journal.LogError(ex, "Chargement de l'historique impossible.");
+            _logger.LogError(ex, "Chargement de l'historique impossible.");
             MessageErreur = "Historique indisponible. Verifier la connexion au serveur.";
         }
         finally

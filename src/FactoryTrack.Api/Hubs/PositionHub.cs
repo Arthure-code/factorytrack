@@ -6,9 +6,9 @@ namespace FactoryTrack.Api.Hubs;
 
 public class PositionHub : Hub
 {
-    private readonly ILogger<PositionHub> _journal;
+    private readonly ILogger<PositionHub> _logger;
 
-    public PositionHub(ILogger<PositionHub> journal) => _journal = journal;
+    public PositionHub(ILogger<PositionHub> logger) => _logger = logger;
 
     public async Task RejoindreEtage(int etage) =>
     await Groups.AddToGroupAsync(Context.ConnectionId, NomsHub.Groupes.Etage(etage));
@@ -22,7 +22,7 @@ public class PositionHub : Hub
 
     public override Task OnConnectedAsync()
     {
-        _journal.LogDebug("Client connecte : {Id}", Context.ConnectionId);
+        _logger.LogDebug("Client connecte : {Id}", Context.ConnectionId);
         return base.OnConnectedAsync();
     }
 }

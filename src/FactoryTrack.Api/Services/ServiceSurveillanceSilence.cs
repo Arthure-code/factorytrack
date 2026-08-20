@@ -15,7 +15,7 @@ public class ServiceSurveillanceSilence : BackgroundService
     private readonly IServiceScopeFactory _fabriquePortee;
     private readonly IHubContext<PositionHub> _hub;
     private readonly OptionsPositionnement _options;
-    private readonly ILogger<ServiceSurveillanceSilence> _journal;
+    private readonly ILogger<ServiceSurveillanceSilence> _logger;
 
     private readonly ConcurrentDictionary<string, bool> _etatSilencieux = new();
 
@@ -23,28 +23,28 @@ public class ServiceSurveillanceSilence : BackgroundService
         IServiceScopeFactory fabriquePortee,
         IHubContext<PositionHub> hub,
         IOptions<OptionsPositionnement> options,
-        ILogger<ServiceSurveillanceSilence> journal)
+        ILogger<ServiceSurveillanceSilence> logger)
     {
         _fabriquePortee = fabriquePortee;
         _hub = hub;
         _options = options.Value;
-        _journal = journal;
+        _logger = logger;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken jeton)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         using var minuterie = new PeriodicTimer(PERIODE);
 
-        while (await minuterie.WaitForNextTickAsync(jeton))
+        while (await minuterie.WaitForNextTickAsync(stoppingToken))
         {
             try
             {
-                await VerifierAsync(jeton);
+                await VerifierAsync(stoppingToken);
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
 
-                _journal.LogError(ex, "Echec du cycle de surveillance.");
+                _logger.LogError(ex, "Echec du cycle de surveillance.");
             }
         }
     }

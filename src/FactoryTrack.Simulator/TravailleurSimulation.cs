@@ -11,35 +11,35 @@ public class TravailleurSimulation : BackgroundService
     private const double PUISSANCE_REFERENCE = -59;
 
     private readonly OptionsSimulateur _options;
-    private readonly ILogger<TravailleurSimulation> _journal;
+    private readonly ILogger<TravailleurSimulation> _logger;
     private readonly Random _alea = new(42);
 
-    public TravailleurSimulation(IOptions<OptionsSimulateur> options, ILogger<TravailleurSimulation> journal)
+    public TravailleurSimulation(IOptions<OptionsSimulateur> options, ILogger<TravailleurSimulation> logger)
     {
         _options = options.Value;
-        _journal = journal;
+        _logger = logger;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken jeton)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var passerelles = ConstruirePasserelles();
         var equipements = ConstruireEquipements();
         var generateur = new GenerateurMesures(_alea);
 
-        _journal.LogInformation(
+        _logger.LogInformation(
             "Simulation : {Equipements} equipements, {Passerelles} passerelles, periode {Periode} ms.",
             equipements.Count, passerelles.Count, _options.PeriodeMs);
 
-        while (!jeton.IsCancellationRequested)
+        while (!stoppingToken.IsCancellationRequested)
         {
             try
             {
-                await DiffuserAsync(equipements, passerelles, generateur, jeton);
+                await DiffuserAsync(equipements, passerelles, generateur, stoppingToken);
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                _journal.LogError(ex, "Flux interrompu. Nouvelle tentative dans 5 s.");
-                await Task.Delay(TimeSpan.FromSeconds(5), jeton);
+                _logger.LogError(ex, "Flux interrompu. Nouvelle tentative dans 5 s.");
+                await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
             }
         }
     }

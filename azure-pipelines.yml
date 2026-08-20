@@ -78,7 +78,7 @@ stages:
         NUGET_PACKAGES: '$(Pipeline.Workspace)/.nuget/packages'
 
     # SonarCloud DOIT etre prepare AVANT le build : le scanner s'accroche a MSBuild.
-    - task: SonarCloudPrepare@4
+    - task: SonarCloudPrepare@4.2.5
       displayName: 'Preparer analyse SonarCloud (MSBuild)'
       inputs:
         SonarCloud: '$(sonarServiceConnection)'
@@ -130,14 +130,14 @@ stages:
         testResultsFiles: '$(Agent.TempDirectory)/tests/*.trx'
         mergeTestResults: true
 
-    - task: SonarCloudAnalyze@4
+    - task: SonarCloudAnalyze@4.2.5
       displayName: 'Analyser avec SonarCloud'
       inputs:
         jdkversion: 'JAVA_HOME_17_X64'
 
     # Quality gate publie uniquement sur main : sur les branches feature, on
     # laisse l'analyse remonter mais on ne bloque pas le pipeline.
-    - task: SonarCloudPublish@4
+    - task: SonarCloudPublish@4.2.5
       displayName: 'Publier le Quality Gate'
       condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
       inputs:
@@ -234,10 +234,16 @@ stages:
       displayName: 'docker compose build'
 
     # Scan des vulnerabilites des images (Trivy). Echoue au niveau HIGH/CRITICAL.
+    # Binaire epingle + verification sha256 : pas d'execution de script telecharge.
     - script: |
         set -euo pipefail
-        curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh \
-          | sh -s -- -b /usr/local/bin
+        TRIVY_VERSION='0.74.0'
+        TRIVY_SHA256='2ae6fe3ee734b7fdf11335663e18c75ea12dccc76062f09f164a3b0f8be4371a'
+        curl -sSfL --proto '=https' --tlsv1.2 -o trivy.tar.gz \
+          "https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz"
+        echo "${TRIVY_SHA256}  trivy.tar.gz" | sha256sum -c -
+        tar -xzf trivy.tar.gz trivy
+        sudo mv trivy /usr/local/bin/trivy
         for image in factorytrack-api factorytrack-ingestion factorytrack-simulateur; do
           trivy image --severity HIGH,CRITICAL --exit-code 1 --no-progress "$image"
         done

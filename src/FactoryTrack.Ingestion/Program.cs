@@ -21,6 +21,7 @@ builder.Services.AddSingleton<ServicePositionnement>(fournisseur =>
 
 builder.Services.AddSingleton<IGardeIdempotence, GardeIdempotence>();
 builder.Services.AddSingleton<GardeHorsOrdre>();
+builder.Services.AddSingleton<GardesIngestion>();
 
 builder.Services.AddSingleton<IPublicateurPositions, PublicateurSignalR>();
 
@@ -37,4 +38,7 @@ app.MapGet("/", () => "FactoryTrack Ingestion - point d'entree gRPC.");
 
 await app.RunAsync();
 
-public partial class Program { }
+public partial class Program
+{
+    protected Program() { }
+}

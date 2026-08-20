@@ -19,7 +19,7 @@ public partial class PlanUsineViewModel : ObservableObject, IAsyncDisposable
 
     private readonly IClientReferentiel _referentiel;
     private readonly IServiceTempsReel _tempsReel;
-    private readonly ILogger<PlanUsineViewModel> _journal;
+    private readonly ILogger<PlanUsineViewModel> _logger;
 
     private readonly Dictionary<string, EquipementApercu> _parBalise = new();
 
@@ -41,11 +41,11 @@ public partial class PlanUsineViewModel : ObservableObject, IAsyncDisposable
     public PlanUsineViewModel(
         IClientReferentiel referentiel,
         IServiceTempsReel tempsReel,
-        ILogger<PlanUsineViewModel> journal)
+        ILogger<PlanUsineViewModel> logger)
     {
         _referentiel = referentiel;
         _tempsReel = tempsReel;
-        _journal = journal;
+        _logger = logger;
 
         _tempsReel.PositionRecue += TraiterPosition;
         _tempsReel.EquipementSilencieux += id => BasculerSilence(id, true);
@@ -100,7 +100,7 @@ public partial class PlanUsineViewModel : ObservableObject, IAsyncDisposable
         }
         catch (Exception ex)
         {
-            _journal.LogError(ex, "Chargement du plan impossible.");
+            _logger.LogError(ex, "Chargement du plan impossible.");
             MessageErreur = "Serveur injoignable. Verifier l'URL et reessayer.";
         }
         finally

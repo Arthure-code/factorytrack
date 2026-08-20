@@ -144,13 +144,21 @@ jobs:
       - name: docker compose build
         run: docker compose build api ingestion simulateur
 
-      # Installation directe de Trivy via le script officiel : evite le bug de
-      # dependance vers aquasecurity/setup-trivy@v0.2.1 (tag inexistant) qui
-      # casse trivy-action a partir de la v0.28.
+      # Installation de Trivy par binaire epingle + verification sha256 : evite
+      # l'execution d'un script telecharge et le bug de dependance vers
+      # aquasecurity/setup-trivy@v0.2.1 (tag inexistant) qui casse trivy-action
+      # a partir de la v0.28.
       - name: Installer Trivy
+        env:
+          TRIVY_VERSION: '0.74.0'
+          TRIVY_SHA256: '2ae6fe3ee734b7fdf11335663e18c75ea12dccc76062f09f164a3b0f8be4371a'
         run: |
-          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh \
-            | sudo sh -s -- -b /usr/local/bin
+          set -euo pipefail
+          curl -sSfL --proto '=https' --tlsv1.2 -o trivy.tar.gz \
+            "https://github.com/aquasecurity/trivy/releases/download/v${TRIVY_VERSION}/trivy_${TRIVY_VERSION}_Linux-64bit.tar.gz"
+          echo "${TRIVY_SHA256}  trivy.tar.gz" | sha256sum -c -
+          tar -xzf trivy.tar.gz trivy
+          sudo mv trivy /usr/local/bin/trivy
           trivy --version
 
       - name: Trivy - scan des images (HIGH/CRITICAL bloquant)
