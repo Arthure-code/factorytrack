@@ -21,5 +21,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\FactoryTrack.Domain\FactoryTrack.Domain.csproj" />
     <ProjectReference Include="..\..\src\FactoryTrack.Positioning\FactoryTrack.Positioning.csproj" />
+    <ProjectReference Include="..\..\src\FactoryTrack.Ingestion\FactoryTrack.Ingestion.csproj" />
   </ItemGroup>
 </Project>

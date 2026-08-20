@@ -1,18 +1,22 @@
+# Variables externalisees : les valeurs par defaut ne servent qu'au dev local.
+# Pour toute exposition reseau, definir un fichier .env (non commite) avec des
+# credentials forts. Voir SECURITY.md.
+
 services:
   timescaledb:
     image: timescale/timescaledb:latest-pg16
     container_name: factorytrack-db
     environment:
-      POSTGRES_DB: factorytrack
-      POSTGRES_USER: factorytrack
-      POSTGRES_PASSWORD: factorytrack
+      POSTGRES_DB: ${POSTGRES_DB:-factorytrack}
+      POSTGRES_USER: ${POSTGRES_USER:-factorytrack}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-factorytrack}
     ports:
       - "5432:5432"
     volumes:
       - donnees-timescale:/var/lib/postgresql/data
       - ./db/init:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U factorytrack -d factorytrack"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-factorytrack} -d ${POSTGRES_DB:-factorytrack}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -27,7 +31,7 @@ services:
         condition: service_healthy
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__FactoryTrack: "Host=timescaledb;Port=5432;Database=factorytrack;Username=factorytrack;Password=factorytrack"
+      ConnectionStrings__FactoryTrack: "Host=timescaledb;Port=5432;Database=${POSTGRES_DB:-factorytrack};Username=${POSTGRES_USER:-factorytrack};Password=${POSTGRES_PASSWORD:-factorytrack}"
     ports:
       - "8080:8080"
     healthcheck:
@@ -49,7 +53,7 @@ services:
         condition: service_healthy
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__FactoryTrack: "Host=timescaledb;Port=5432;Database=factorytrack;Username=factorytrack;Password=factorytrack"
+      ConnectionStrings__FactoryTrack: "Host=timescaledb;Port=5432;Database=${POSTGRES_DB:-factorytrack};Username=${POSTGRES_USER:-factorytrack};Password=${POSTGRES_PASSWORD:-factorytrack}"
       Api__UrlHub: "http://api:8080/hubs/positions"
     ports:
       - "8081:8080"
