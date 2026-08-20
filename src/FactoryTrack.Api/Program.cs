@@ -56,7 +56,7 @@ app.MapperAlertes();
 app.MapHub<PositionHub>(NomsHub.Chemin);
 app.MapHealthChecks("/health");
 
-app.Run();
+await app.RunAsync();
 
 /// <summary>Expose pour les tests d'integration (WebApplicationFactory).</summary>
 public partial class Program { }

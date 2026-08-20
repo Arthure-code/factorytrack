@@ -36,7 +36,7 @@ app.MapGrpcService<ServiceIngestionGrpc>();
 app.MapHealthChecks("/health");
 app.MapGet("/", () => "FactoryTrack Ingestion - point d'entree gRPC.");
 
-app.Run();
+await app.RunAsync();
 
 /// <summary>Expose pour les tests d'integration (WebApplicationFactory).</summary>
 public partial class Program { }

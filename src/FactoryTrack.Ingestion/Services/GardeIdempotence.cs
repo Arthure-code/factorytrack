@@ -14,6 +14,7 @@ public class GardeIdempotence : IGardeIdempotence, IDisposable
     private readonly ConcurrentDictionary<string, DateTimeOffset> _cles = new();
     private readonly TimeSpan _retention;
     private readonly Timer _nettoyage;
+    private bool _disposed;
 
     public GardeIdempotence(IOptions<OptionsPositionnement> options)
     {
@@ -35,9 +36,22 @@ public class GardeIdempotence : IGardeIdempotence, IDisposable
         }
     }
 
+    // Dispose pattern complet (Sonar S3881) : la methode publique est scellee via
+    // GC.SuppressFinalize, la methode virtuelle protegee libere les ressources.
+    // Permet a une classe derivee d'ajouter du nettoyage sans casser l'ordre.
     public void Dispose()
     {
-        _nettoyage.Dispose();
+        Dispose(disposing: true);
         GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_disposed) return;
+
+        if (disposing)
+            _nettoyage.Dispose();
+
+        _disposed = true;
     }
 }

@@ -13,4 +13,4 @@ builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(Log.Logger);
 
 var hote = builder.Build();
-hote.Run();
+await hote.RunAsync();
