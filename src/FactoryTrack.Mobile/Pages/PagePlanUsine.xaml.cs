@@ -16,8 +16,6 @@ public partial class PagePlanUsine : ContentPage
     {
         base.OnAppearing();
 
-        // Chargement initial la premiere fois. Les fois suivantes, la connexion
-        // temps reel est deja active : inutile de repayer un round-trip complet.
         if (_modele.Equipements.Count == 0)
             await _modele.ChargerAsync();
     }

@@ -34,7 +34,6 @@ public class FiltrePositionTests
         var filtre = new FiltrePosition(alpha: 0.5, sautMaximalMetres: 5);
         filtre.Lisser("TAG-001", 0, 0);
 
-        // Un bond de 50 m est physiquement impossible pour un chariot.
         var (x, _) = filtre.Lisser("TAG-001", 50, 0);
 
         x.Should().BeLessThan(10, "un saut aberrant ne doit pas etre suivi");

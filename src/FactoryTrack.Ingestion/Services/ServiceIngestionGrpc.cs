@@ -11,19 +11,6 @@ using TechnologieDomaine = FactoryTrack.Domain.Enums.TypeTechnologie;
 
 namespace FactoryTrack.Ingestion.Services;
 
-/// <summary>
-/// Point d'entree du flux montant. Les mesures d'une meme balise sont regroupees
-/// dans une fenetre temporelle avant trilateration : une seule mesure ne suffit pas
-/// a positionner quoi que ce soit.
-///
-/// Un groupe est ferme et trilatere quand :
-///   - il contient une mesure de toutes les passerelles actives (cas nominal), OU
-///   - une nouvelle mesure arrive alors que la plus ancienne a plus de
-///     FenetreRegroupementMs (le groupe est ferme avant d'accueillir la nouvelle).
-/// Cette double condition evite deux defauts opposes : trilaterer trop tot en
-/// gaspillant les ancres qui suivent, ou attendre indefiniment un lot complet
-/// quand une passerelle est muette.
-/// </summary>
 public class ServiceIngestionGrpc : ServiceIngestion.ServiceIngestionBase
 {
     private readonly ServicePositionnement _positionnement;
@@ -62,7 +49,6 @@ public class ServiceIngestionGrpc : ServiceIngestion.ServiceIngestionBase
         var compteurs = new Compteurs();
         var fenetre = TimeSpan.FromMilliseconds(_options.FenetreRegroupementMs);
 
-        // Mesures en attente, groupees par balise, jusqu'a fermeture de la fenetre.
         var enAttente = new Dictionary<string, List<MesureRssi>>();
 
         using var portee = _fabriquePortee.CreateScope();
@@ -99,8 +85,7 @@ public class ServiceIngestionGrpc : ServiceIngestion.ServiceIngestionBase
             }
             else if (groupe.Count > 0)
             {
-                // Groupe deja ouvert : est-il perime ? Si oui on le ferme avant d'ajouter
-                // la nouvelle mesure (elle appartient au lot suivant).
+
                 var age = mesure.Horodatage - groupe.Min(m => m.Horodatage);
                 if (age > fenetre)
                 {
@@ -109,11 +94,9 @@ public class ServiceIngestionGrpc : ServiceIngestion.ServiceIngestionBase
                 }
             }
 
-            // Une seule mesure par passerelle : la plus recente remplace la precedente.
             groupe.RemoveAll(m => m.PasserelleId == mesure.PasserelleId);
             groupe.Add(mesure);
 
-            // Cas nominal : toutes les passerelles ont parle, on peut trilaterer.
             if (groupe.Count >= nombrePasserellesActives && groupe.Count >= _options.AncresMinimales)
             {
                 await FermerGroupeAsync(groupe, passerelles, balise, depotPositions, compteurs, jeton);
@@ -121,7 +104,6 @@ public class ServiceIngestionGrpc : ServiceIngestion.ServiceIngestionBase
             }
         }
 
-        // Fin du flux : on tente de trilaterer les groupes qui ont atteint le quorum minimal.
         foreach (var (baliseId, groupe) in enAttente)
         {
             if (groupe.Count < _options.AncresMinimales || !balises.TryGetValue(baliseId, out var balise))

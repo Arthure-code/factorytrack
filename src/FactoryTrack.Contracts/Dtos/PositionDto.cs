@@ -1,6 +1,5 @@
 namespace FactoryTrack.Contracts.Dtos;
 
-/// <summary>Position diffusee aux clients. Partage par MAUI et Blazor.</summary>
 public sealed record PositionDto(
     string BaliseIdentifiant,
     double X,

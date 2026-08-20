@@ -21,8 +21,7 @@ builder.Services.AddSingleton<ServicePositionnement>(fournisseur =>
 
 builder.Services.AddSingleton<IGardeIdempotence, GardeIdempotence>();
 builder.Services.AddSingleton<GardeHorsOrdre>();
-// Singleton : la HubConnection sous-jacente doit etre partagee, sinon chaque
-// appel gRPC refait un handshake (voir bug releve dans l'analyse du back-end).
+
 builder.Services.AddSingleton<IPublicateurPositions, PublicateurSignalR>();
 
 builder.Services.AddGrpc();
@@ -38,5 +37,4 @@ app.MapGet("/", () => "FactoryTrack Ingestion - point d'entree gRPC.");
 
 await app.RunAsync();
 
-/// <summary>Expose pour les tests d'integration (WebApplicationFactory).</summary>
 public partial class Program { }

@@ -1,6 +1,5 @@
 namespace FactoryTrack.Simulator;
 
-/// <summary>Marche aleatoire lissee, bornee au plan de l'usine.</summary>
 public class ModeleEquipementSimule
 {
     private readonly Random _alea;
@@ -31,7 +30,7 @@ public class ModeleEquipementSimule
 
     public void Avancer(double vitesseMax, double deltaSecondes)
     {
-        // Le cap derive lentement : un chariot ne change pas de direction a chaque pas.
+
         _capX += (_alea.NextDouble() - 0.5) * 0.3;
         _capY += (_alea.NextDouble() - 0.5) * 0.3;
 

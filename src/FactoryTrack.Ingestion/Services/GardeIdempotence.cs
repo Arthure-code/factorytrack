@@ -5,10 +5,6 @@ using Microsoft.Extensions.Options;
 
 namespace FactoryTrack.Ingestion.Services;
 
-/// <summary>
-/// Memoire glissante des cles deja vues. En V1 en memoire : une instance unique
-/// d'ingestion suffit a la charge visee (voir ADR 0002 pour la mise a l'echelle).
-/// </summary>
 public class GardeIdempotence : IGardeIdempotence, IDisposable
 {
     private readonly ConcurrentDictionary<string, DateTimeOffset> _cles = new();
@@ -36,9 +32,6 @@ public class GardeIdempotence : IGardeIdempotence, IDisposable
         }
     }
 
-    // Dispose pattern complet (Sonar S3881) : la methode publique est scellee via
-    // GC.SuppressFinalize, la methode virtuelle protegee libere les ressources.
-    // Permet a une classe derivee d'ajouter du nettoyage sans casser l'ordre.
     public void Dispose()
     {
         Dispose(disposing: true);

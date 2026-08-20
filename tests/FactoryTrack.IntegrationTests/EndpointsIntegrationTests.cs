@@ -12,11 +12,6 @@ using Xunit;
 
 namespace FactoryTrack.IntegrationTests;
 
-/// <summary>
-/// Instancie l'API ASP.NET Core au-dessus du TimescaleDB ephemere et interroge
-/// chaque endpoint reel. Couvre Program.cs, Endpoints/*, DepotPositions et
-/// DepotReferentiel en un seul aller-retour HTTP par cas.
-/// </summary>
 public class EndpointsIntegrationTests : BaseTimescaleDb, IAsyncLifetime
 {
     private WebApplicationFactory<Program>? _fabrique;
@@ -33,8 +28,7 @@ public class EndpointsIntegrationTests : BaseTimescaleDb, IAsyncLifetime
                 builder.UseEnvironment("Development");
                 builder.ConfigureServices(services =>
                 {
-                    // Neutralise les hosted services : ils demanderaient un cycle
-                    // de vie complet inutile pour tester les endpoints REST.
+
                     var hosted = services
                         .Where(s => s.ServiceType.FullName?.EndsWith("IHostedService") == true)
                         .ToList();
@@ -168,7 +162,9 @@ public class EndpointsIntegrationTests : BaseTimescaleDb, IAsyncLifetime
         {
             Id = Guid.NewGuid(),
             Identifiant = "GW-TEST",
-            X = 0, Y = 0, Etage = 0,
+            X = 0,
+            Y = 0,
+            Etage = 0,
             Active = true
         };
         var balise = new Balise

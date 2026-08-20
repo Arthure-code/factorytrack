@@ -2,10 +2,6 @@ using System.Collections.Concurrent;
 
 namespace FactoryTrack.Positioning;
 
-/// <summary>
-/// Lissage exponentiel par balise, avec rejet des sauts aberrants.
-/// Le filtre s'applique a la position calculee, jamais au RSSI brut.
-/// </summary>
 public class FiltrePosition
 {
     private readonly ConcurrentDictionary<string, (double X, double Y)> _dernieresPositions = new();
@@ -31,7 +27,6 @@ public class FiltrePosition
 
         var deplacement = Math.Sqrt(Math.Pow(x - precedente.X, 2) + Math.Pow(y - precedente.Y, 2));
 
-        // Un saut trop grand est probablement du bruit : on amortit fortement plutot que de le suivre.
         var alpha = deplacement > _sautMaximal ? _alpha / 4 : _alpha;
 
         var lissee = (

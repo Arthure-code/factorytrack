@@ -1,5 +1,3 @@
--- Jeu minimal permettant a la V1 de fonctionner des le premier demarrage.
--- Quatre passerelles aux coins d'une usine de 60 m x 40 m, geometrie non colineaire.
 
 INSERT INTO passerelles ("Id", "Identifiant", "X", "Y", "Etage", "Active")
 VALUES
@@ -13,7 +11,7 @@ INSERT INTO balises ("Id", "Identifiant", "Technologie", "PuissanceReference")
 SELECT
     ('22222222-2222-2222-2222-' || lpad(i::text, 12, '0'))::uuid,
     'TAG-' || lpad(i::text, 3, '0'),
-    CASE WHEN i % 5 = 0 THEN 1 ELSE 0 END,  -- une balise sur cinq en UWB
+    CASE WHEN i % 5 = 0 THEN 1 ELSE 0 END,
     -59
 FROM generate_series(1, 20) AS i
 ON CONFLICT ("Identifiant") DO NOTHING;
@@ -44,8 +42,6 @@ VALUES
     ('44444444-4444-4444-4444-444444444401', 'Quai de chargement',  0,  0,  0, 15, 12, false, false),
     ('44444444-4444-4444-4444-444444444402', 'Zone de production',  0, 15,  5, 50, 35, false, false),
     ('44444444-4444-4444-4444-444444444403', 'Local electrique',    0, 52, 32, 60, 40, true,  false),
-    -- Perimetre de securite : marge de 3 m depuis chaque passerelle.
-    -- Un equipement qui SORT de ce rectangle declenche une alerte.
     ('44444444-4444-4444-4444-444444444404', 'Perimetre de securite', 0,  3,  3, 57, 37, false, true)
 ON CONFLICT DO NOTHING;
 

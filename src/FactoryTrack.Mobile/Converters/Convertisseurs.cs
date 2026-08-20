@@ -2,7 +2,6 @@ using System.Globalization;
 
 namespace FactoryTrack.Mobile.Converters;
 
-/// <summary>Rond vert si connecte, rouge sinon.</summary>
 public class ConvertisseurEtatConnexion : IValueConverter
 {
     private static readonly Color Vert = Color.FromArgb("#27AE60");
@@ -15,7 +14,6 @@ public class ConvertisseurEtatConnexion : IValueConverter
         throw new NotSupportedException();
 }
 
-/// <summary>Libelle textuel de l'etat de connexion.</summary>
 public class ConvertisseurLibelleConnexion : IValueConverter
 {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>

@@ -6,10 +6,6 @@ using Microsoft.Extensions.Logging;
 
 namespace FactoryTrack.Mobile.ViewModels;
 
-/// <summary>
-/// Ecran d'historique des alertes : recuperation avec filtres, selection
-/// multiple, suppression individuelle ou par lot.
-/// </summary>
 public partial class HistoriqueAlertesViewModel : ObservableObject
 {
     private readonly IClientAlertes _client;
@@ -40,8 +36,6 @@ public partial class HistoriqueAlertesViewModel : ObservableObject
         {
             var recues = await _client.ObtenirAsync(limite: 500);
 
-            // Desabonnement de l'ancienne collection pour eviter de compter
-            // les items detruits dans les selections courantes.
             foreach (var ancienne in Alertes)
                 ancienne.PropertyChanged -= AuChangementSelection;
 

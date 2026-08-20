@@ -8,7 +8,6 @@ public interface IDepotPositions
 
     Task EnregistrerLotAsync(IReadOnlyCollection<Position> positions, CancellationToken jeton = default);
 
-    /// <summary>Dernieres positions connues. <paramref name="etage"/> null pour tous les etages.</summary>
     Task<IReadOnlyList<Position>> ObtenirDernieresAsync(int? etage, CancellationToken jeton = default);
 
     Task<IReadOnlyList<Position>> ObtenirHistoriqueAsync(

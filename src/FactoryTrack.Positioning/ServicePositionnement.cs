@@ -4,10 +4,6 @@ using FactoryTrack.Domain.Options;
 
 namespace FactoryTrack.Positioning;
 
-/// <summary>
-/// Chaine complete : mesures RSSI d'une meme balise vers une position filtree.
-/// Aucune dependance a l'infrastructure : entierement testable unitairement.
-/// </summary>
 public class ServicePositionnement
 {
     private readonly OptionsPositionnement _options;
@@ -19,13 +15,10 @@ public class ServicePositionnement
         _filtre = new FiltrePosition(options.AlphaLissage, options.SautMaximalMetres);
     }
 
-    /// <param name="mesures">Mesures d'une meme balise, provenant de passerelles distinctes.</param>
-    /// <param name="passerelles">Referentiel des passerelles, indexe par identifiant.</param>
-    /// <param name="balise">Balise concernee.</param>
     public ResultatPositionnement Calculer(
-        IReadOnlyList<MesureRssi> mesures,
-        IReadOnlyDictionary<string, Passerelle> passerelles,
-        Balise balise)
+    IReadOnlyList<MesureRssi> mesures,
+    IReadOnlyDictionary<string, Passerelle> passerelles,
+    Balise balise)
     {
         ArgumentNullException.ThrowIfNull(mesures);
         ArgumentNullException.ThrowIfNull(passerelles);
@@ -67,10 +60,6 @@ public class ServicePositionnement
         return ResultatPositionnement.Succes(position);
     }
 
-    /// <summary>
-    /// L'UWB mesure un temps de vol, le Bluetooth une puissance : les incertitudes
-    /// ne sont pas du meme ordre. Le plancher traduit cette difference physique.
-    /// </summary>
     private static double EstimerPrecision(double residuMoyen, TypeTechnologie technologie)
     {
         var plancher = technologie == TypeTechnologie.Uwb ? 0.3 : 2.0;

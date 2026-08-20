@@ -11,11 +11,6 @@ using SkiaSharp.Views.Maui.Controls;
 
 namespace FactoryTrack.Mobile.Controls;
 
-/// <summary>
-/// Rendu du plan de l'usine en coordonnees locales (metres). L'axe Y est
-/// inverse a l'affichage : la convention industrielle place l'origine en
-/// bas a gauche, celle de SKCanvas est en haut a gauche.
-/// </summary>
 public class VuePlanUsine : SKCanvasView
 {
     public static readonly BindableProperty LargeurUsineProperty =
@@ -99,8 +94,6 @@ public class VuePlanUsine : SKCanvasView
 
     private readonly HashSet<INotifyPropertyChanged> _abonnesItem = new();
 
-    // Cache des positions ecran des equipements pour le hit-test au tap.
-    // Rempli a chaque rendu ; le premier tap avant un rendu ne fait rien.
     private readonly List<(EquipementApercu Apercu, SKPoint Position)> _dernieresPositionsEcran = new();
 
     public VuePlanUsine()
@@ -155,7 +148,7 @@ public class VuePlanUsine : SKCanvasView
 
     private void ObserverEquipements(object? ancienne, object? nouvelle)
     {
-        // Desabonnement des anciens items pour eviter la fuite.
+
         foreach (var item in _abonnesItem)
             item.PropertyChanged -= AuChangementItem;
 
@@ -273,8 +266,6 @@ public class VuePlanUsine : SKCanvasView
             var cx = (rect.Left + rect.Right) / 2f;
             var cy = (rect.Top + rect.Bottom) / 2f;
 
-            // Barre horizontale (Ligne d'assemblage) : un seul label sur une ligne.
-            // Sinon : Code au-dessus, Nom en-dessous.
             if (rect.Height < 40)
             {
                 canvas.DrawText($"{m.Code}  {m.Nom}", cx, cy + 4, SKTextAlign.Center, policeCode, texteBlanc);
@@ -311,7 +302,6 @@ public class VuePlanUsine : SKCanvasView
             StrokeWidth = 1
         };
 
-        // Grille tous les 5 metres.
         for (double x = 0; x <= largeur; x += 5)
         {
             var a = versEcran(x, 0);
@@ -339,9 +329,6 @@ public class VuePlanUsine : SKCanvasView
             var coinBas = versEcran(zone.XMax, zone.YMin);
             var rect = new SKRect(coinHaut.X, coinHaut.Y, coinBas.X, coinBas.Y);
 
-            // Perimetre : contour pointille orange, sans remplissage.
-            // Interdite : rouge translucide + contour rouge.
-            // Neutre    : vert translucide + contour vert.
             if (zone.Perimetre)
             {
                 var orange = new SKColor(0xF3, 0x9C, 0x12);
@@ -429,7 +416,6 @@ public class VuePlanUsine : SKCanvasView
             var pt = versEcran(eq.X, eq.Y);
             _dernieresPositionsEcran.Add((eq, pt));
 
-            // Priorite : zone interdite (rouge) > hors perimetre (orange) > silencieux (gris) > actif (bleu).
             SKColor couleurBord;
             SKColor couleurTexte;
 
@@ -456,7 +442,7 @@ public class VuePlanUsine : SKCanvasView
 
             if (AfficherPrecision)
             {
-                // Contour discret, pointille : lu comme "zone d'incertitude" sans masquer les voisins.
+
                 var rayonPrecision = Math.Max(3, (float)(eq.Precision * echelle));
                 using var halo = new SKPaint
                 {

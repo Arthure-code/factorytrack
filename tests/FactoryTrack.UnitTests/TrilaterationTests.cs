@@ -9,7 +9,7 @@ public class TrilaterationTests
     [Fact]
     public void Resoudre_TroisAncresExactes_RetrouveLaPosition()
     {
-        // Point cible (10, 10) avec des distances parfaites.
+
         var ancres = new List<Ancre>
         {
             new(0, 0, 0, Distance(0, 0, 10, 10)),
@@ -39,7 +39,7 @@ public class TrilaterationTests
     [Fact]
     public void Resoudre_AncresColineaires_Echoue()
     {
-        // Trois ancres alignees : le systeme n'a pas de solution unique.
+
         var ancres = new List<Ancre>
         {
             new(0, 0, 0, 10),

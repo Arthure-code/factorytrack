@@ -51,8 +51,7 @@ public class DepotAlertes : IDepotAlertes
         string? baliseIdentifiant = null,
         CancellationToken jeton = default)
     {
-        // Refuser une suppression sans critere : sinon un appel malencontreux
-        // viderait toute la table sans intention explicite.
+
         if (!avant.HasValue && !zoneId.HasValue && string.IsNullOrWhiteSpace(baliseIdentifiant))
             throw new ArgumentException("Au moins un critere de suppression est requis.");
 

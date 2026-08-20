@@ -10,14 +10,17 @@ public class ZoneTests
     {
         Nom = "Local electrique",
         Etage = 0,
-        XMin = 52, YMin = 32, XMax = 60, YMax = 40,
+        XMin = 52,
+        YMin = 32,
+        XMax = 60,
+        YMax = 40,
         Interdite = true
     };
 
     [Theory]
     [InlineData(55, 35, true)]
-    [InlineData(52, 32, true)]   // coin inferieur, inclusif
-    [InlineData(60, 40, true)]   // coin superieur, inclusif
+    [InlineData(52, 32, true)]
+    [InlineData(60, 40, true)]
     [InlineData(51.9, 35, false)]
     [InlineData(30, 20, false)]
     public void Contient_SelonLaPosition_RetourneLeBonResultat(double x, double y, bool attendu)

@@ -5,10 +5,6 @@ using Xunit;
 
 namespace FactoryTrack.UnitTests;
 
-/// <summary>
-/// Deux comportements que tout relecteur cherchera : le doublon et le hors ordre.
-/// La cle d'idempotence est definie par le domaine, sa memorisation par l'ingestion.
-/// </summary>
 public class IdempotenceTests
 {
     [Fact]
@@ -36,8 +32,7 @@ public class IdempotenceTests
     [Fact]
     public void CleIdempotence_RssiDifferent_NeChangePasLaCle()
     {
-        // Deux mesures au meme instant depuis la meme passerelle sont le meme evenement,
-        // meme si la valeur differe : la seconde est un doublon, pas une nouvelle donnee.
+
         var horodatage = DateTimeOffset.UtcNow;
 
         var premiere = new MesureRssi("TAG-001", "GW-01", -70, TypeTechnologie.Bluetooth, horodatage);

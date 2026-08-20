@@ -14,10 +14,9 @@ public interface IClientAlertes
 
     Task SupprimerAsync(Guid id, CancellationToken jeton = default);
 
-    /// <summary>Suppression par lot ; au moins un critere requis.</summary>
     Task SupprimerLotAsync(
-        DateTimeOffset? avant = null,
-        Guid? zoneId = null,
-        string? baliseIdentifiant = null,
-        CancellationToken jeton = default);
+    DateTimeOffset? avant = null,
+    Guid? zoneId = null,
+    string? baliseIdentifiant = null,
+    CancellationToken jeton = default);
 }

@@ -6,10 +6,7 @@ option csharp_namespace = "FactoryTrack.Contracts.Grpc";
 
 package factorytrack.ingestion.v1;
 
-// Point d'entree unique des mesures radio.
-// Trois producteurs possibles : passerelles reelles, simulateur, rejeu de jeu de donnees.
 service ServiceIngestion {
-  // Flux montant : la passerelle pousse ses mesures en continu.
   rpc EnvoyerMesures(stream MesureRssiMessage) returns (AccuseReception);
 
   rpc Ping(RequetePing) returns (ReponsePing);

@@ -1,10 +1,5 @@
 namespace FactoryTrack.Domain.Entites;
 
-/// <summary>
-/// Poste stationnaire du plan : presse, tour, robot, ligne d'assemblage.
-/// Une machine occupe une emprise physique rectangulaire, contrairement a
-/// un equipement mobile qui est un point suivi par sa balise.
-/// </summary>
 public class MachineFixe
 {
     public Guid Id { get; set; }

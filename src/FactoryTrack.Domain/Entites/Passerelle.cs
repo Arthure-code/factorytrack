@@ -1,6 +1,5 @@
 namespace FactoryTrack.Domain.Entites;
 
-/// <summary>Recepteur fixe de position connue. Mesure le RSSI des balises.</summary>
 public class Passerelle
 {
     public Guid Id { get; set; }

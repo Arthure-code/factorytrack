@@ -6,11 +6,6 @@ using Xunit;
 
 namespace FactoryTrack.UnitTests;
 
-/// <summary>
-/// Une mesure identifiee par une meme cle ne doit produire qu'un seul evenement,
-/// meme si elle est envoyee plusieurs fois. Ces tests protegent le comportement
-/// central de la deduplication en ingestion.
-/// </summary>
 public class GardeIdempotenceTests
 {
     private static GardeIdempotence CreerGarde(int retentionSecondes = 120)
@@ -67,7 +62,7 @@ public class GardeIdempotenceTests
     [Fact]
     public void Dispose_AppelePlusieurs_Fois_EstIdempotent()
     {
-        // Le garde-fou _disposed permet l'appel repete sans effet de bord.
+
         var garde = CreerGarde();
 
         var action = () =>

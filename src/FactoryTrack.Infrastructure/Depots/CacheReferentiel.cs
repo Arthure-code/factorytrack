@@ -3,10 +3,6 @@ using FactoryTrack.Domain.Interfaces;
 
 namespace FactoryTrack.Infrastructure.Depots;
 
-/// <summary>
-/// Le referentiel change rarement mais est lu a chaque mesure. Sans cache,
-/// l'ingestion ferait un aller-retour en base par paquet radio.
-/// </summary>
 public class CacheReferentiel
 {
     private static readonly TimeSpan DUREE_VALIDITE = TimeSpan.FromMinutes(5);

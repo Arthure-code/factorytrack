@@ -7,10 +7,6 @@ using Microsoft.Extensions.Logging;
 
 namespace FactoryTrack.Mobile.ViewModels;
 
-/// <summary>
-/// Charge la trace des 30 dernieres minutes d'une balise et calcule quelques
-/// statistiques utiles (distance parcourue, precision moyenne, plage horaire).
-/// </summary>
 [QueryProperty(nameof(BaliseId), "baliseId")]
 [QueryProperty(nameof(Code), "code")]
 [QueryProperty(nameof(Nom), "nom")]
@@ -48,7 +44,7 @@ public partial class DetailEquipementViewModel : ObservableObject
 
     partial void OnBaliseIdChanged(string? value)
     {
-        // Shell navigue et injecte l'id ; on lance le chargement des que la valeur arrive.
+
         if (!string.IsNullOrWhiteSpace(value))
             _ = ChargerAsync();
     }

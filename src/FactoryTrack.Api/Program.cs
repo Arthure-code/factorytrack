@@ -28,8 +28,6 @@ builder.Services.AddHealthChecks()
 
 const string POLITIQUE_CORS = "ClientsFactoryTrack";
 
-// AllowAnyOrigin est incompatible avec AllowCredentials : SignalR exige les
-// identifiants, donc les origines doivent etre listees explicitement.
 builder.Services.AddCors(options =>
     options.AddPolicy(POLITIQUE_CORS, politique =>
         politique
@@ -58,5 +56,4 @@ app.MapHealthChecks("/health");
 
 await app.RunAsync();
 
-/// <summary>Expose pour les tests d'integration (WebApplicationFactory).</summary>
 public partial class Program { }

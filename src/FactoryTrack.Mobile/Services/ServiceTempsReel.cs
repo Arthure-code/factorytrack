@@ -5,12 +5,6 @@ using Microsoft.Extensions.Logging;
 
 namespace FactoryTrack.Mobile.Services;
 
-/// <summary>
-/// Client SignalR unique de l'application. La reconnexion est deleguee au
-/// framework ; a chaque reprise, on notifie le ViewModel pour qu'il recharge
-/// l'etat complet via REST (les messages perdus pendant la coupure ne
-/// reviennent pas).
-/// </summary>
 public sealed class ServiceTempsReel : IServiceTempsReel
 {
     private readonly OptionsApi _options;

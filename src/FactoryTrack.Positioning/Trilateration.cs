@@ -1,11 +1,5 @@
 namespace FactoryTrack.Positioning;
 
-/// <summary>
-/// Resolution par moindres carres. En soustrayant l'equation de la premiere ancre
-/// aux suivantes, le systeme quadratique devient lineaire :
-///     2(xi - x0) X + 2(yi - y0) Y = d0^2 - di^2 + xi^2 - x0^2 + yi^2 - y0^2
-/// resolu ensuite par les equations normales (A^T A) v = A^T b.
-/// </summary>
 public static class Trilateration
 {
     private const double EPSILON = 1e-9;
@@ -35,7 +29,6 @@ public static class Trilateration
                      + Carre(courante.Y) - Carre(reference.Y);
         }
 
-        // Equations normales : matrice 2x2 symetrique, inversion directe.
         double a11 = 0, a12 = 0, a22 = 0, b1 = 0, b2 = 0;
 
         for (var i = 0; i < lignes; i++)
@@ -58,7 +51,6 @@ public static class Trilateration
         return new ResultatTrilateration(true, x, y, CalculerResidu(ancres, x, y));
     }
 
-    /// <summary>Ecart moyen entre distances mesurees et distances a la solution. Sert d'indice de precision.</summary>
     private static double CalculerResidu(IReadOnlyList<Ancre> ancres, double x, double y)
     {
         var somme = 0.0;

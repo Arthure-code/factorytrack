@@ -6,12 +6,6 @@ using Xunit;
 
 namespace FactoryTrack.IntegrationTests;
 
-/// <summary>
-/// Le depot est teste sur une vraie hypertable TimescaleDB. Deux invariants
-/// non triviaux : le DISTINCT ON par balise doit rendre la plus recente ;
-/// et une insertion en doublon (meme balise + meme horodatage) doit etre
-/// rejetee au niveau contrainte, pas silencieusement acceptee.
-/// </summary>
 public class DepotPositionsIntegrationTests : BaseTimescaleDb
 {
     [Fact]
@@ -29,7 +23,8 @@ public class DepotPositionsIntegrationTests : BaseTimescaleDb
             {
                 BaliseId = balise,
                 BaliseIdentifiant = "TAG-INT-01",
-                X = i, Y = i,
+                X = i,
+                Y = i,
                 Etage = 0,
                 Precision = 2.5,
                 Technologie = TypeTechnologie.Bluetooth,
@@ -58,9 +53,6 @@ public class DepotPositionsIntegrationTests : BaseTimescaleDb
 
         var doublon = Fabriquer(balise, horodatage, x: 2);
 
-        // On veut prouver que la contrainte primaire (BaliseId, Horodatage) protege
-        // le stockage : sans elle, la surveillance du silence et le DISTINCT ON
-        // deviendraient non deterministes.
         var action = async () =>
         {
             await using var autreContexte = CreerContexte();
@@ -75,7 +67,8 @@ public class DepotPositionsIntegrationTests : BaseTimescaleDb
     {
         BaliseId = balise,
         BaliseIdentifiant = "TAG-INT-02",
-        X = x, Y = 0,
+        X = x,
+        Y = 0,
         Etage = 0,
         Precision = 3,
         Technologie = TypeTechnologie.Bluetooth,

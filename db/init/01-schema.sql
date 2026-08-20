@@ -1,7 +1,3 @@
--- Schema de reference pour la V1.
--- EF Core decrit le modele, mais la conversion en hypertable et les politiques
--- Timescale ne sont pas exprimables par le ChangeTracker : elles vivent ici.
--- Voir docs/adr/0003-schema-sql-plutot-que-migrations.md
 
 CREATE EXTENSION IF NOT EXISTS timescaledb;
 
@@ -45,8 +41,6 @@ CREATE TABLE IF NOT EXISTS zones (
     "Perimetre" boolean NOT NULL DEFAULT false
 );
 
--- Sans migrations EF, on ajoute la colonne a la volee si la table existe deja
--- (bases anciennes qui n'ont pas ete recreees).
 ALTER TABLE zones ADD COLUMN IF NOT EXISTS "Perimetre" boolean NOT NULL DEFAULT false;
 
 CREATE TABLE IF NOT EXISTS machines_fixes (
@@ -77,8 +71,6 @@ CREATE INDEX IF NOT EXISTS ix_alertes_horodatage ON alertes_historique ("Horodat
 CREATE INDEX IF NOT EXISTS ix_alertes_balise ON alertes_historique ("BaliseIdentifiant", "Horodatage" DESC);
 CREATE INDEX IF NOT EXISTS ix_alertes_zone ON alertes_historique ("ZoneId", "Horodatage" DESC);
 
--- Serie temporelle. La cle primaire inclut l'horodatage : Timescale exige que la
--- colonne de partitionnement fasse partie de toute contrainte unique.
 CREATE TABLE IF NOT EXISTS positions (
     "BaliseId"          uuid NOT NULL,
     "BaliseIdentifiant" varchar(100) NOT NULL,
@@ -99,7 +91,6 @@ SELECT create_hypertable('positions', 'Horodatage',
 CREATE INDEX IF NOT EXISTS ix_positions_etage_horodatage
     ON positions ("Etage", "Horodatage" DESC);
 
--- Agregation continue : le mode replay lit ceci plutot que les positions brutes.
 CREATE MATERIALIZED VIEW IF NOT EXISTS positions_agregees_minute
 WITH (timescaledb.continuous) AS
 SELECT
@@ -120,5 +111,4 @@ SELECT add_continuous_aggregate_policy('positions_agregees_minute',
     schedule_interval => INTERVAL '1 minute',
     if_not_exists => TRUE);
 
--- Les positions brutes ne servent qu'au court terme : l'agregat prend le relais.
 SELECT add_retention_policy('positions', INTERVAL '7 days', if_not_exists => TRUE);

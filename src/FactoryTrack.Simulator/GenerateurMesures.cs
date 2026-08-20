@@ -2,11 +2,6 @@ using FactoryTrack.Domain.Entites;
 
 namespace FactoryTrack.Simulator;
 
-/// <summary>
-/// Chemin inverse du positionnement : a partir d'une position connue, produit
-/// les RSSI qu'auraient mesures les passerelles. Permet de comparer la position
-/// calculee par le back-end a la verite terrain.
-/// </summary>
 public class GenerateurMesures
 {
     private readonly Random _alea;
@@ -28,7 +23,6 @@ public class GenerateurMesures
         return (int)Math.Round(rssiTheorique + BruitGaussien() * bruit);
     }
 
-    /// <summary>Box-Muller : le bruit radio suit une loi normale, pas uniforme.</summary>
     private double BruitGaussien()
     {
         var u1 = 1.0 - _alea.NextDouble();

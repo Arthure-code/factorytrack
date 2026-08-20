@@ -2,11 +2,6 @@ using FactoryTrack.Contracts.Dtos;
 
 namespace FactoryTrack.Mobile.Services;
 
-/// <summary>
-/// Abonnement au flux temps reel des positions. Une seule instance pour toute
-/// l'application : la HubConnection sous-jacente est coûteuse a etablir et
-/// sait se reconnecter seule.
-/// </summary>
 public interface IServiceTempsReel : IAsyncDisposable
 {
     event Action<PositionDto>? PositionRecue;
@@ -15,7 +10,6 @@ public interface IServiceTempsReel : IAsyncDisposable
     event Action<AlerteZoneDto>? AlerteZoneEntree;
     event Action<AlerteZoneDto>? AlerteZoneSortie;
 
-    /// <summary>Emis quand la connexion revient : le ViewModel doit resynchroniser.</summary>
     event Func<Task>? Resynchronisation;
 
     bool EstConnecte { get; }

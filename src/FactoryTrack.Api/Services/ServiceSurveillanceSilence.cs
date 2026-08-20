@@ -8,13 +8,6 @@ using Microsoft.Extensions.Options;
 
 namespace FactoryTrack.Api.Services;
 
-/// <summary>
-/// Detecte les equipements dont plus aucune mesure n'arrive et previent les clients.
-/// Afficher une position perimee comme actuelle serait un mensonge fonctionnel.
-///
-/// La notification n'est emise qu'a la transition (actif -> silencieux et retour) :
-/// spammer les clients a chaque cycle inonderait l'UI pour une information stable.
-/// </summary>
 public class ServiceSurveillanceSilence : BackgroundService
 {
     private static readonly TimeSpan PERIODE = TimeSpan.FromSeconds(10);
@@ -24,7 +17,6 @@ public class ServiceSurveillanceSilence : BackgroundService
     private readonly OptionsPositionnement _options;
     private readonly ILogger<ServiceSurveillanceSilence> _journal;
 
-    // Etat memorise entre deux cycles : true si la balise etait silencieuse au dernier tour.
     private readonly ConcurrentDictionary<string, bool> _etatSilencieux = new();
 
     public ServiceSurveillanceSilence(
@@ -51,7 +43,7 @@ public class ServiceSurveillanceSilence : BackgroundService
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                // Une erreur ponctuelle ne doit pas tuer la boucle de surveillance.
+
                 _journal.LogError(ex, "Echec du cycle de surveillance.");
             }
         }

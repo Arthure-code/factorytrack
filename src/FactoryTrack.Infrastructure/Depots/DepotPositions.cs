@@ -25,15 +25,9 @@ public class DepotPositions : IDepotPositions
         await _contexte.SaveChangesAsync(jeton);
     }
 
-    /// <summary>
-    /// Derniere position connue par balise. DISTINCT ON est propre a PostgreSQL et
-    /// bien plus rapide ici qu'un GROUP BY suivi d'une jointure.
-    /// </summary>
     public async Task<IReadOnlyList<Position>> ObtenirDernieresAsync(int? etage, CancellationToken jeton = default)
     {
-        // Le filtre par etage est optionnel : null equivaut a "tous etages confondus".
-        // On passe -1 comme sentinelle inutilisee quand etage est null pour garder une
-        // signature parametree (les parametres nuls sont mal supportes par FromSqlRaw).
+
         return await _contexte.Positions
             .FromSqlRaw(
                 """

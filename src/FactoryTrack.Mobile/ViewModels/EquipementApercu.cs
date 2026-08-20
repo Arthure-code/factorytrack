@@ -3,11 +3,6 @@ using FactoryTrack.Contracts.Dtos;
 
 namespace FactoryTrack.Mobile.ViewModels;
 
-/// <summary>
-/// Vue courte d'un equipement pour le plan et la liste. Les DTO REST sont
-/// immuables (records), on les enveloppe pour que la mise a jour temps reel
-/// declenche l'affichage sans recreer la collection.
-/// </summary>
 public partial class EquipementApercu : ObservableObject
 {
     [ObservableProperty] private double x;

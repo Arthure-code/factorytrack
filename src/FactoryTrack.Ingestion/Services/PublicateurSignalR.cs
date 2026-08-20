@@ -6,14 +6,6 @@ using Microsoft.AspNetCore.SignalR.Client;
 
 namespace FactoryTrack.Ingestion.Services;
 
-/// <summary>
-/// V1 : l'ingestion se connecte au hub de l'API comme un client et lui transmet
-/// les positions a diffuser. Voir ADR 0002 pour le remplacement par un courtier.
-///
-/// Enregistre en Singleton : la HubConnection sous-jacente est thread-safe pour les
-/// invocations, mais le demarrage doit etre serialise pour eviter les StartAsync
-/// concurrents lorsque plusieurs flux gRPC publient en meme temps.
-/// </summary>
 public class PublicateurSignalR : IPublicateurPositions, IAsyncDisposable
 {
     private const string METHODE_DIFFUSION = "DiffuserPosition";
@@ -71,7 +63,7 @@ public class PublicateurSignalR : IPublicateurPositions, IAsyncDisposable
 
         try
         {
-            // Un autre appelant peut avoir demarre la connexion entre le check et la prise du verrou.
+
             if (_connexion.State != HubConnectionState.Disconnected)
                 return;
 
@@ -79,7 +71,7 @@ public class PublicateurSignalR : IPublicateurPositions, IAsyncDisposable
         }
         catch (Exception ex)
         {
-            // La diffusion est secondaire : l'ingestion et le stockage doivent continuer.
+
             _journal.LogError(ex, "Connexion au hub impossible.");
         }
         finally

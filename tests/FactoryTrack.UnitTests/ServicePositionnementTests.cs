@@ -109,7 +109,6 @@ public class ServicePositionnementTests
         PuissanceReference = -59
     };
 
-    /// <summary>Genere les RSSI theoriques qu'auraient mesures les passerelles pour un point donne.</summary>
     private static List<MesureRssi> CreerMesuresPour(double x, double y, Balise balise)
     {
         const double EXPOSANT = 2.8;

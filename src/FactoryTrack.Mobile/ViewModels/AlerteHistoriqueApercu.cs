@@ -3,7 +3,6 @@ using FactoryTrack.Contracts.Dtos;
 
 namespace FactoryTrack.Mobile.ViewModels;
 
-/// <summary>Ligne de l'ecran d'historique. La selection est mutable (checkbox).</summary>
 public partial class AlerteHistoriqueApercu : ObservableObject
 {
     [ObservableProperty] private bool selectionnee;

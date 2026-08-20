@@ -7,18 +7,12 @@ using Microsoft.Extensions.Logging;
 
 namespace FactoryTrack.Mobile.ViewModels;
 
-/// <summary>Nombre maximal d'alertes gardees dans la banniere.</summary>
 file static class LimitesAlertes
 {
     public const int Maximum = 5;
     public static readonly TimeSpan Duree = TimeSpan.FromSeconds(15);
 }
 
-/// <summary>
-/// Etat du plan de l'usine : referentiel statique et positions temps reel.
-/// Les evenements SignalR arrivent sur un thread de fond ; toute modification
-/// des collections observables passe par le dispatcher UI.
-/// </summary>
 public partial class PlanUsineViewModel : ObservableObject, IAsyncDisposable
 {
     private const double MARGE_PLAN_METRES = 5;
@@ -170,8 +164,6 @@ public partial class PlanUsineViewModel : ObservableObject, IAsyncDisposable
         if (apercu is null || apercu.BaliseId is null)
             return;
 
-        // On passe les infos statiques dans l'URL pour eviter au detail d'attendre
-        // un round-trip REST juste pour afficher l'en-tete.
         var parametres = new Dictionary<string, object>
         {
             ["baliseId"] = apercu.BaliseId.Value.ToString(),
@@ -203,9 +195,7 @@ public partial class PlanUsineViewModel : ObservableObject, IAsyncDisposable
 
     private void TraiterAlerteEntree(AlerteZoneDto alerte)
     {
-        // Deux cas d'alerte a notifier : entree en zone interdite, ou sortie
-        // du perimetre de securite. Les zones neutres (production, quai) sont
-        // ignorees ici : entrer dedans est un evenement metier normal.
+
         if (!alerte.ZoneInterdite && !alerte.ZonePerimetre)
             return;
 
@@ -224,7 +214,6 @@ public partial class PlanUsineViewModel : ObservableObject, IAsyncDisposable
             while (Alertes.Count > LimitesAlertes.Maximum)
                 Alertes.RemoveAt(Alertes.Count - 1);
 
-            // Auto-expiration de la banniere apres LimitesAlertes.Duree.
             var horodatage = alerte.Horodatage;
             _ = Task.Delay(LimitesAlertes.Duree).ContinueWith(_ =>
                 SurUi(() =>

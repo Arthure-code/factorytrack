@@ -29,7 +29,7 @@ public class ClientReferentiel : IClientReferentiel
     public async Task<IReadOnlyList<PositionDto>> ObtenirHistoriqueAsync(
         Guid baliseId, DateTimeOffset debut, DateTimeOffset fin, CancellationToken jeton = default)
     {
-        // Format ISO 8601 : PostgreSQL et ASP.NET Core l'acceptent tous les deux.
+
         var chemin = $"/api/positions/historique/{baliseId}" +
                      $"?debut={Uri.EscapeDataString(debut.ToString("o"))}" +
                      $"&fin={Uri.EscapeDataString(fin.ToString("o"))}";

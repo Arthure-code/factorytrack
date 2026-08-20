@@ -15,7 +15,6 @@ public class AlerteHistoriqueConfiguration : IEntityTypeConfiguration<AlerteHist
         builder.Property(a => a.CodeEquipement).HasMaxLength(50).IsRequired();
         builder.Property(a => a.ZoneNom).HasMaxLength(200).IsRequired();
 
-        // Recherche courante : historique recent, ou filtre par balise / zone.
         builder.HasIndex(a => a.Horodatage);
         builder.HasIndex(a => new { a.BaliseIdentifiant, a.Horodatage });
         builder.HasIndex(a => new { a.ZoneId, a.Horodatage });

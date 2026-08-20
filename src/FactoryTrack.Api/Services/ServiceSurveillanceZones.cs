@@ -8,12 +8,6 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace FactoryTrack.Api.Services;
 
-/// <summary>
-/// Balaie regulierement les dernieres positions et emet une alerte a l'entree
-/// en zone interdite ou a la sortie d'un perimetre de securite. Chaque
-/// transition est aussi consignee en base (IDepotAlertes) : la source de
-/// verite temps reel reste SignalR, le journal sert l'ecran d'historique.
-/// </summary>
 public class ServiceSurveillanceZones : BackgroundService
 {
     private static readonly TimeSpan PERIODE = TimeSpan.FromSeconds(5);

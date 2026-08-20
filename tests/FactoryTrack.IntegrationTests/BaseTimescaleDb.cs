@@ -5,13 +5,6 @@ using Xunit;
 
 namespace FactoryTrack.IntegrationTests;
 
-/// <summary>
-/// Instance TimescaleDB ephemere partagee entre tests d'une meme classe.
-/// Choix delibere : PAS de base en memoire. Une base SQLite ou InMemory ne
-/// reproduit ni les hypertables, ni le comportement DISTINCT ON, ni les
-/// types Npgsql specifiques (timestamptz). Les faux positifs sur ces points
-/// nous auraient exactement fait perdre le benefice du test d'integration.
-/// </summary>
 public abstract class BaseTimescaleDb : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _conteneur = new PostgreSqlBuilder()
@@ -42,8 +35,7 @@ public abstract class BaseTimescaleDb : IAsyncLifetime
 
     private async Task ExecuterSchemaAsync()
     {
-        // On rejoue le schema declaratif du repo. Le fichier est reference en tant que
-        // MSBuild None avec CopyToOutputDirectory, donc present a cote du binaire.
+
         var chemin = Path.Combine(AppContext.BaseDirectory, "01-schema.sql");
         var sql = await File.ReadAllTextAsync(chemin);
 

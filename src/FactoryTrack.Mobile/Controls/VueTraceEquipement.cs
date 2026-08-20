@@ -7,10 +7,6 @@ using SkiaSharp.Views.Maui.Controls;
 
 namespace FactoryTrack.Mobile.Controls;
 
-/// <summary>
-/// Trace du chemin d'une balise. Fond de plan discret + polyline degradee
-/// (gris pour les positions anciennes, bleu vif pour la plus recente).
-/// </summary>
 public class VueTraceEquipement : SKCanvasView
 {
     public static readonly BindableProperty LargeurUsineProperty =
@@ -86,7 +82,6 @@ public class VueTraceEquipement : SKCanvasView
             offsetX + (float)(x * echelle),
             offsetY + hauteurTracee - (float)(y * echelle));
 
-        // Fond discret pour situer la trace dans l'usine.
         using var fond = new SKPaint { Color = new SKColor(0xF8, 0xF9, 0xFB), Style = SKPaintStyle.Fill };
         canvas.DrawRect(offsetX, offsetY, largeurTracee, hauteurTracee, fond);
 
@@ -138,7 +133,6 @@ public class VueTraceEquipement : SKCanvasView
 
         if (points.Count == 0) return;
 
-        // Segments avec opacite croissante : le present est plus vif que le passe.
         using var segment = new SKPaint
         {
             Style = SKPaintStyle.Stroke,
@@ -155,7 +149,6 @@ public class VueTraceEquipement : SKCanvasView
             canvas.DrawLine(points[i - 1], points[i], segment);
         }
 
-        // Point de depart : cercle vide.
         using var depart = new SKPaint
         {
             Color = new SKColor(0x7F, 0x8C, 0x8D),
@@ -165,7 +158,6 @@ public class VueTraceEquipement : SKCanvasView
         };
         canvas.DrawCircle(points[0], 4, depart);
 
-        // Position actuelle : point plein.
         using var actuel = new SKPaint
         {
             Color = new SKColor(0x21, 0x77, 0xBB),

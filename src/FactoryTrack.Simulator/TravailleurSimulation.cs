@@ -12,7 +12,7 @@ public class TravailleurSimulation : BackgroundService
 
     private readonly OptionsSimulateur _options;
     private readonly ILogger<TravailleurSimulation> _journal;
-    private readonly Random _alea = new(42); // Graine fixe : simulations reproductibles.
+    private readonly Random _alea = new(42);
 
     public TravailleurSimulation(IOptions<OptionsSimulateur> options, ILogger<TravailleurSimulation> journal)
     {
@@ -81,7 +81,6 @@ public class TravailleurSimulation : BackgroundService
 
                     await appel.RequestStream.WriteAsync(message, jeton);
 
-                    // Doublon volontaire : le back-end doit le rejeter sans effet de bord.
                     if (_alea.NextDouble() < _options.TauxDoublon)
                         await appel.RequestStream.WriteAsync(message, jeton);
                 }
@@ -93,14 +92,13 @@ public class TravailleurSimulation : BackgroundService
         await appel.RequestStream.CompleteAsync();
     }
 
-    /// <summary>Quatre passerelles aux coins : geometrie non colineaire, condition de la trilateration.</summary>
     private List<Passerelle> ConstruirePasserelles() =>
-    [
-        new() { Identifiant = "GW-01", X = 0, Y = 0, Etage = 0, Active = true },
+[
+    new() { Identifiant = "GW-01", X = 0, Y = 0, Etage = 0, Active = true },
         new() { Identifiant = "GW-02", X = _options.LargeurUsine, Y = 0, Etage = 0, Active = true },
         new() { Identifiant = "GW-03", X = _options.LargeurUsine, Y = _options.HauteurUsine, Etage = 0, Active = true },
         new() { Identifiant = "GW-04", X = 0, Y = _options.HauteurUsine, Etage = 0, Active = true }
-    ];
+];
 
     private List<ModeleEquipementSimule> ConstruireEquipements() =>
         Enumerable.Range(1, _options.NombreEquipements)
