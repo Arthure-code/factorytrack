@@ -9,7 +9,7 @@ RUN dotnet restore src/FactoryTrack.Simulator/FactoryTrack.Simulator.csproj
 COPY src/ src/
 RUN dotnet publish src/FactoryTrack.Simulator/FactoryTrack.Simulator.csproj -c Release -o /app --no-restore
 
-FROM mcr.microsoft.com/dotnet/runtime:9.0 AS final
+FROM mcr.microsoft.com/dotnet/runtime:10.0 AS final
 WORKDIR /app
 COPY --from=build /app .
 
